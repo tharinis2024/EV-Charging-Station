@@ -1,0 +1,1108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-title">
+            <span class="brand-icon small">&#9889;</span>
+            <div>
+                <strong>Admin Panel</strong>
+                <small>EV ChargePoint</small>
+            </div>
+        </div>
+        <nav class="admin-nav" id="admin-nav">
+            <button type="button" class="admin-nav-item active" id="admin-dashboard" data-section="dashboard">&#128202; Dashboard</button>
+            <button type="button" class="admin-nav-item" id="admin-stations" data-section="stations">&#128205; Stations</button>
+            <button type="button" class="admin-nav-item" id="admin-charging-points" data-section="points">&#128268; Charging Points</button>
+            <button type="button" class="admin-nav-item" id="admin-slots" data-section="slots">&#128336; Slots</button>
+            <button type="button" class="admin-nav-item" id="admin-pricing" data-section="pricing">&#128176; Pricing</button>
+            <button type="button" class="admin-nav-item" id="admin-bookings" data-section="bookings">&#128203; Bookings</button>
+            <button type="button" class="admin-nav-item" id="admin-users" data-section="users">&#128101; Users</button>
+            <button type="button" class="admin-nav-item" id="admin-notifications" data-section="notifications">&#128276; Notifications</button>
+        </nav>
+        <a href="/dashboard" class="admin-back-link">&larr; Back to site</a>
+    </aside>
+
+    <main class="admin-main">
+        <!-- ========== DASHBOARD SECTION ========== -->
+        <section class="admin-section active" id="admin-dashboard-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p class="text-muted">Network overview and key metrics</p>
+                </div>
+                <button class="btn btn-outline btn-sm" type="button" id="btn-refresh-stats">&#8635; Refresh</button>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">&#128101;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-total-users">&mdash;</span>
+                        <span class="stat-label">Total Users</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">&#128205;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-total-stations">&mdash;</span>
+                        <span class="stat-label">Total Stations</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">&#128268;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-total-points">&mdash;</span>
+                        <span class="stat-label">Charging Points</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">&#128267;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-active-bookings">&mdash;</span>
+                        <span class="stat-label">Active Bookings</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">&#9989;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-completed-sessions">&mdash;</span>
+                        <span class="stat-label">Completed Sessions</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">&#10060;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-cancelled-bookings">&mdash;</span>
+                        <span class="stat-label">Cancelled Bookings</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-highlight">
+                    <div class="stat-icon">&#128176;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-revenue">&mdash;</span>
+                        <span class="stat-label">Revenue (Paid)</span>
+                    </div>
+                </div>
+            </div>
+            <!-- ========== RECENT BOOKINGS ========== -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Recent Bookings</h3>
+                    <button class="btn btn-ghost btn-sm" type="button" data-goto="bookings">View all &rarr;</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>User</th>
+                                <th>Station</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-bookings-list">
+                            <tr><td colspan="6" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== STATIONS SECTION ========== -->
+        <section class="admin-section" id="admin-stations-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Stations</h2>
+                    <p class="text-muted">Add, edit, view, and remove charging stations</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Stations</h3>
+                    <button class="btn btn-primary btn-sm admin-add-station" type="button" id="btn-add-station-toggle" onclick="toggleForm('add-station-form')">+ Add Station</button>
+                </div>
+
+                <form id="add-station-form" style="display: none;">
+                    <input type="hidden" id="station-edit-id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="station-name">Name</label>
+                            <input type="text" id="station-name" class="form-control" placeholder="Station name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="station-location">Location</label>
+                            <input type="text" id="station-location" class="form-control" placeholder="Location" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="station-hours">Operating Hours</label>
+                            <input type="text" id="station-hours" class="form-control" placeholder="e.g. 24/7" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="station-connectors">Connector Types</label>
+                            <input type="text" id="station-connectors" class="form-control" placeholder="e.g. Type 2, CCS" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="station-price">Price per kWh (&#8377;)</label>
+                            <input type="number" step="0.01" min="0" id="station-price" class="form-control" placeholder="0.50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="station-status">Status</label>
+                            <select id="station-status" class="form-control">
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="INACTIVE">INACTIVE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-station">Save Station</button>
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="resetStationForm()">Cancel</button>
+                    </div>
+                </form>
+
+                <div class="table-wrap mt-1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Hours</th>
+                                <th>Connectors</th>
+                                <th>Price/kWh</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-stations-list">
+                            <tr><td colspan="8" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CHARGING POINTS SECTION ========== -->
+        <section class="admin-section" id="admin-charging-points-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Charging Points</h2>
+                    <p class="text-muted">Manage charging points and their operating status</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Charging Points</h3>
+                    <button class="btn btn-primary btn-sm" type="button" id="btn-add-point-toggle" onclick="toggleForm('add-point-form')">+ Add Point</button>
+                </div>
+
+                <form id="add-point-form" style="display: none;">
+                    <input type="hidden" id="point-edit-id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="point-station-id">Station ID</label>
+                            <input type="number" id="point-station-id" class="form-control" placeholder="Station ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="point-name">Point Name</label>
+                            <input type="text" id="point-name" class="form-control" placeholder="e.g. Point A1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="point-status">Status</label>
+                            <select id="point-status" class="form-control">
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="INACTIVE">INACTIVE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-point">Save Point</button>
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="resetPointForm()">Cancel</button>
+                    </div>
+                </form>
+
+                <div class="table-wrap mt-1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Station</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-points-list">
+                            <tr><td colspan="5" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SLOTS SECTION ========== -->
+        <section class="admin-section" id="admin-slots-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Slots</h2>
+                    <p class="text-muted">Manage time slots and review availability</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Slots</h3>
+                    <button class="btn btn-primary btn-sm" type="button" id="btn-add-slot-toggle" onclick="toggleForm('add-slot-form')">+ Add Slot</button>
+                </div>
+
+                <form id="add-slot-form" style="display: none;">
+                    <input type="hidden" id="slot-edit-id" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="slot-point-id">Point ID</label>
+                            <input type="number" id="slot-point-id" class="form-control" placeholder="Point ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="slot-time">Time</label>
+                            <input type="text" id="slot-time" class="form-control" placeholder="e.g. 09:00-10:00" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-slot">Save Slot</button>
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="resetSlotForm()">Cancel</button>
+                    </div>
+                </form>
+
+                <div class="table-wrap mt-1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Station</th>
+                                <th>Point</th>
+                                <th>Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-slots-list">
+                            <tr><td colspan="5" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h3>Availability</h3>
+                    <div class="slot-controls">
+                        <input type="date" id="slot-availability-date" class="form-control">
+                        <button class="btn btn-primary btn-sm" type="button" id="btn-check-availability" onclick="loadAvailability()">Check</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Station</th>
+                                <th>Point</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Booked By</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slot-availability-list">
+                            <tr><td colspan="5" class="empty-cell">Pick a date to view availability.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PRICING SECTION ========== -->
+        <section class="admin-section" id="admin-pricing-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Pricing</h2>
+                    <p class="text-muted">Current energy pricing in &#8377; per kWh</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Station Pricing</h3>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Station</th>
+                                <th>Location</th>
+                                <th>Current Price</th>
+                                <th>New Price (&#8377;/kWh)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pricing-list">
+                            <tr><td colspan="6" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== BOOKINGS SECTION ========== -->
+        <section class="admin-section" id="admin-bookings-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Bookings</h2>
+                    <p class="text-muted">Search, filter, and inspect all bookings</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="search-bar" style="margin-bottom: 0;">
+                        <input type="text" id="booking-search" class="form-control" placeholder="Search by booking ID, user, station&hellip;">
+                        <select id="booking-status-filter" class="form-control">
+                            <option value="">All statuses</option>
+                            <option value="PENDING">PENDING</option>
+                            <option value="CONFIRMED">CONFIRMED</option>
+                            <option value="CHARGING">CHARGING</option>
+                            <option value="COMPLETED">COMPLETED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                        <select id="booking-payment-filter" class="form-control">
+                            <option value="">All payments</option>
+                            <option value="SUCCESS">PAID</option>
+                            <option value="FAILED">FAILED</option>
+                            <option value="NONE">UNPAID</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>User</th>
+                                <th>Station</th>
+                                <th>Date &amp; Time</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-bookings-list">
+                            <tr><td colspan="8" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== USERS SECTION ========== -->
+        <section class="admin-section" id="admin-users-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Users</h2>
+                    <p class="text-muted">Registered accounts and their booking activity</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Bookings</th>
+                                <th>Cancelled</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-list">
+                            <tr><td colspan="7" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== NOTIFICATIONS SECTION ========== -->
+        <section class="admin-section" id="admin-notifications-section">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Notifications</h2>
+                    <p class="text-muted">System-wide booking, payment, and charging events</p>
+                </div>
+                <button class="btn btn-outline btn-sm" type="button" id="btn-refresh-admin-notifications" onclick="loadAdminNotifications()">&#8635; Refresh</button>
+            </div>
+
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>User</th>
+                                <th>Message</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-notifications-list">
+                            <tr><td colspan="5" class="empty-cell">Loading&hellip;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MODAL ========== -->
+        <div class="modal-overlay" id="admin-modal">
+            <div class="modal-box">
+                <div class="modal-head">
+                    <h3 id="admin-modal-title">Details</h3>
+                    <button class="modal-close" id="admin-modal-close" type="button" onclick="closeModal()" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body" id="admin-modal-body"></div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ============================================================
+// Admin Dashboard — section navigation, loaders, CRUD handlers
+// ============================================================
+const SECTION_IDS = {
+    dashboard: 'admin-dashboard-section',
+    stations: 'admin-stations-section',
+    points: 'admin-charging-points-section',
+    slots: 'admin-slots-section',
+    pricing: 'admin-pricing-section',
+    bookings: 'admin-bookings-section',
+    users: 'admin-users-section',
+    notifications: 'admin-notifications-section'
+};
+
+let adminStationsCache = [];
+let adminPointsCache = [];
+let adminBookingsCache = [];
+
+function emptyRow(cols, message) {
+    return `<tr><td colspan="${cols}" class="empty-cell">${message}</td></tr>`;
+}
+
+function switchAdminSection(name) {
+    if (!SECTION_IDS[name]) return;
+    document.querySelectorAll('.admin-nav-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.section === name);
+    });
+    document.querySelectorAll('.admin-section').forEach(sec => {
+        sec.classList.toggle('active', sec.id === SECTION_IDS[name]);
+    });
+    if (window.history.replaceState) {
+        window.history.replaceState(null, '', `#${name}`);
+    }
+}
+
+function handleApiError(res) {
+    if (res.status === 403) {
+        showToast('Forbidden: Admin access required.', 'error');
+        setTimeout(() => { window.location.href = '/login'; }, 500);
+        return true;
+    }
+    return false;
+}
+
+function openModal(title, html) {
+    document.getElementById('admin-modal-title').textContent = title;
+    document.getElementById('admin-modal-body').innerHTML = html;
+    document.getElementById('admin-modal').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('admin-modal').classList.remove('open');
+}
+
+function toggleForm(formId) {
+    const form = document.getElementById(formId);
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+// ---------- Dashboard statistics ----------
+function loadStats() {
+    fetch('/api/admin/stats')
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(s => {
+            document.getElementById('stat-total-users').textContent = s.total_users;
+            document.getElementById('stat-total-stations').textContent = s.total_stations;
+            document.getElementById('stat-total-points').textContent = s.total_charging_points;
+            document.getElementById('stat-active-bookings').textContent = s.active_bookings;
+            document.getElementById('stat-completed-sessions').textContent = s.completed_sessions;
+            document.getElementById('stat-cancelled-bookings').textContent = s.cancelled_bookings;
+            document.getElementById('stat-revenue').textContent = formatINR(s.revenue);
+        })
+        .catch(() => {});
+}
+
+// ---------- Master loader ----------
+function loadAdminData() {
+    loadStats();
+    loadStationsAdmin();
+    loadPointsAdmin();
+    loadSlotsAdmin();
+    loadBookingsAdmin();
+    loadUsersAdmin();
+    loadAdminNotifications();
+}
+// == CRUD: STATIONS ==
+function loadStationsAdmin() {
+    fetch('/api/admin/stations')
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            adminStationsCache = data;
+            const tbody = document.getElementById('admin-stations-list');
+            if (!data.length) {
+                tbody.innerHTML = emptyRow(8, 'No stations yet.');
+                renderPricing();
+                return;
+            }
+            tbody.innerHTML = data.map(s => `
+                <tr>
+                    <td>${s.id}</td>
+                    <td>${escapeHtml(s.name)}</td>
+                    <td>${escapeHtml(s.location)}</td>
+                    <td>${escapeHtml(s.operating_hours)}</td>
+                    <td>${escapeHtml(s.connector_types)}</td>
+                    <td>${formatINR(s.price_per_kwh)}</td>
+                    <td>${statusBadge(s.status || 'ACTIVE')}</td>
+                    <td class="action-cell">
+                        <button class="btn btn-ghost btn-sm" id="btn-view-station-${s.id}" onclick="viewStation(${s.id})">View</button>
+                        <button class="btn btn-outline btn-sm admin-edit-station" id="btn-edit-station-${s.id}" onclick="editStation(${s.id})">Edit</button>
+                        <button class="btn btn-danger btn-sm admin-delete-station" id="btn-delete-station-${s.id}" onclick="deleteStation(${s.id})">Delete</button>
+                    </td>
+                </tr>`).join('');
+            renderPricing();
+        })
+        .catch(() => {});
+}
+
+function editStation(id) {
+    const s = adminStationsCache.find(x => x.id === id);
+    if (!s) return;
+    document.getElementById('station-edit-id').value = s.id;
+    document.getElementById('station-name').value = s.name;
+    document.getElementById('station-location').value = s.location;
+    document.getElementById('station-hours').value = s.operating_hours;
+    document.getElementById('station-connectors').value = s.connector_types;
+    document.getElementById('station-price').value = s.price_per_kwh;
+    const statusSelect = document.getElementById('station-status');
+    if (statusSelect) statusSelect.value = s.status || 'ACTIVE';
+    const form = document.getElementById('add-station-form');
+    form.style.display = 'block';
+    document.getElementById('btn-submit-station').textContent = 'Update Station';
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetStationForm() {
+    const form = document.getElementById('add-station-form');
+    form.reset();
+    document.getElementById('station-edit-id').value = '';
+    document.getElementById('btn-submit-station').textContent = 'Save Station';
+    form.style.display = 'none';
+}
+
+function viewStation(id) {
+    const s = adminStationsCache.find(x => x.id === id);
+    if (!s) return;
+    const points = adminPointsCache.filter(p => p.station_id === id);
+    const pointsHtml = points.length
+        ? `<ul class="detail-list mt-1">${points.map(p =>
+              `<li><span class="detail-label">${escapeHtml(p.point_name)}</span><span>${statusBadge(p.status || 'ACTIVE')}</span></li>`
+          ).join('')}</ul>`
+        : '<p class="text-muted">No charging points for this station.</p>';
+    openModal(`Station #${s.id}: ${s.name}`, `
+        <ul class="detail-list">
+            <li><span class="detail-label">Location</span><span>${escapeHtml(s.location)}</span></li>
+            <li><span class="detail-label">Operating Hours</span><span>${escapeHtml(s.operating_hours)}</span></li>
+            <li><span class="detail-label">Connectors</span><span>${escapeHtml(s.connector_types)}</span></li>
+            <li><span class="detail-label">Price</span><span>${formatINR(s.price_per_kwh)} / kWh</span></li>
+            <li><span class="detail-label">Status</span><span>${statusBadge(s.status || 'ACTIVE')}</span></li>
+        </ul>
+        <h4 class="mt-2">Charging Points</h4>
+        ${pointsHtml}`);
+}
+
+function deleteStation(id) {
+    if (!confirm('Delete this station? Its charging points and slots are kept but orphaned.')) return;
+    fetch(`/api/admin/stations/${id}`, { method: 'DELETE' })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            showToast(data.message || 'Station deleted', 'success');
+            loadStats();
+            loadStationsAdmin();
+            loadPointsAdmin();
+        })
+        .catch(() => showToast('Could not delete station', 'error'));
+}
+
+document.getElementById('add-station-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const editId = document.getElementById('station-edit-id').value;
+    const statusSelect = document.getElementById('station-status');
+    const payload = {
+        name: document.getElementById('station-name').value,
+        location: document.getElementById('station-location').value,
+        operating_hours: document.getElementById('station-hours').value,
+        connector_types: document.getElementById('station-connectors').value,
+        price_per_kwh: parseFloat(document.getElementById('station-price').value),
+        status: statusSelect ? statusSelect.value : 'ACTIVE'
+    };
+    const url = editId ? `/api/admin/stations/${editId}` : '/api/admin/stations';
+    const method = editId ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            showToast(data.message || 'Station saved', 'success');
+            resetStationForm();
+            loadStats();
+            loadStationsAdmin();
+        })
+        .catch(() => showToast('Could not save station', 'error'));
+});
+// == CRUD: POINTS ==
+function loadPointsAdmin() {
+    fetch('/api/admin/points')
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            adminPointsCache = data;
+            const tbody = document.getElementById('admin-points-list');
+            if (!data.length) { tbody.innerHTML = emptyRow(5, 'No charging points yet.'); return; }
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${escapeHtml(p.station_name)}</td>
+                    <td>${escapeHtml(p.point_name)}</td>
+                    <td>${statusBadge(p.status || 'ACTIVE')}</td>
+                    <td class="action-cell">
+                        <button class="btn btn-outline btn-sm" id="btn-edit-point-${p.id}" onclick="editPoint(${p.id})">Edit</button>
+                        <button class="btn btn-ghost btn-sm" id="btn-toggle-point-${p.id}" onclick="togglePointStatus(${p.id})">${(p.status || 'ACTIVE') === 'ACTIVE' ? 'Deactivate' : 'Activate'}</button>
+                        <button class="btn btn-danger btn-sm admin-delete-point" id="btn-delete-point-${p.id}" onclick="deletePoint(${p.id})">Delete</button>
+                    </td>
+                </tr>`).join('');
+        })
+        .catch(() => {});
+}
+
+function editPoint(id) {
+    const p = adminPointsCache.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('point-edit-id').value = p.id;
+    document.getElementById('point-station-id').value = p.station_id;
+    document.getElementById('point-name').value = p.point_name;
+    document.getElementById('point-status').value = p.status || 'ACTIVE';
+    const form = document.getElementById('add-point-form');
+    form.style.display = 'block';
+    document.getElementById('btn-submit-point').textContent = 'Update Point';
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetPointForm() {
+    const form = document.getElementById('add-point-form');
+    form.reset();
+    document.getElementById('point-edit-id').value = '';
+    document.getElementById('btn-submit-point').textContent = 'Save Point';
+    form.style.display = 'none';
+}
+
+function togglePointStatus(id) {
+    const p = adminPointsCache.find(x => x.id === id);
+    if (!p) return;
+    const newStatus = (p.status || 'ACTIVE') === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+    fetch(`/api/admin/points/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ station_id: p.station_id, point_name: p.point_name, status: newStatus })
+    })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(() => {
+            showToast(`Point set to ${newStatus}`, 'success');
+            loadPointsAdmin();
+            loadStats();
+        })
+        .catch(() => showToast('Could not update point status', 'error'));
+}
+
+function deletePoint(id) {
+    if (!confirm('Delete this charging point? Its slots are kept but orphaned.')) return;
+    fetch(`/api/admin/points/${id}`, { method: 'DELETE' })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            showToast(data.message || 'Point deleted', 'success');
+            loadPointsAdmin();
+            loadStats();
+        })
+        .catch(() => showToast('Could not delete point', 'error'));
+}
+
+document.getElementById('add-point-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const editId = document.getElementById('point-edit-id').value;
+    const payload = {
+        station_id: parseInt(document.getElementById('point-station-id').value),
+        point_name: document.getElementById('point-name').value,
+        status: document.getElementById('point-status').value
+    };
+    const url = editId ? `/api/admin/points/${editId}` : '/api/admin/points';
+    const method = editId ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            showToast(data.message || 'Point saved', 'success');
+            resetPointForm();
+            loadPointsAdmin();
+            loadStats();
+        })
+        .catch(() => showToast('Could not save point', 'error'));
+});
+// == CRUD: SLOTS ==
+let adminSlotsCache = [];
+
+function loadSlotsAdmin() {
+    fetch('/api/admin/slots')
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            adminSlotsCache = data;
+            const tbody = document.getElementById('admin-slots-list');
+            if (!data.length) { tbody.innerHTML = emptyRow(5, 'No slots yet.'); return; }
+            tbody.innerHTML = data.map(sl => `
+                <tr>
+                    <td>${sl.id}</td>
+                    <td>${escapeHtml(sl.station_name)}</td>
+                    <td>${escapeHtml(sl.point_name)}</td>
+                    <td class="mono">${escapeHtml(sl.slot_time)}</td>
+                    <td class="action-cell">
+                        <button class="btn btn-outline btn-sm" id="btn-edit-slot-${sl.id}" onclick="editSlot(${sl.id})">Edit</button>
+                        <button class="btn btn-danger btn-sm admin-delete-slot" id="btn-delete-slot-${sl.id}" onclick="deleteSlot(${sl.id})">Delete</button>
+                    </td>
+                </tr>`).join('');
+        })
+        .catch(() => {});
+}
+
+function editSlot(id) {
+    const sl = adminSlotsCache.find(x => x.id === id);
+    if (!sl) return;
+    document.getElementById('slot-edit-id').value = sl.id;
+    document.getElementById('slot-point-id').value = sl.point_id;
+    document.getElementById('slot-time').value = sl.slot_time;
+    const form = document.getElementById('add-slot-form');
+    form.style.display = 'block';
+    document.getElementById('btn-submit-slot').textContent = 'Update Slot';
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetSlotForm() {
+    const form = document.getElementById('add-slot-form');
+    form.reset();
+    document.getElementById('slot-edit-id').value = '';
+    document.getElementById('btn-submit-slot').textContent = 'Save Slot';
+    form.style.display = 'none';
+}
+
+function deleteSlot(id) {
+    if (!confirm('Delete this slot?')) return;
+    fetch(`/api/admin/slots/${id}`, { method: 'DELETE' })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            showToast(data.message || 'Slot deleted', 'success');
+            loadSlotsAdmin();
+        })
+        .catch(() => showToast('Could not delete slot', 'error'));
+}
+
+document.getElementById('add-slot-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const editId = document.getElementById('slot-edit-id').value;
+    const payload = {
+        point_id: parseInt(document.getElementById('slot-point-id').value),
+        slot_time: document.getElementById('slot-time').value
+    };
+    const url = editId ? `/api/admin/slots/${editId}` : '/api/admin/slots';
+    const method = editId ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            showToast(data.message || 'Slot saved', 'success');
+            resetSlotForm();
+            loadSlotsAdmin();
+        })
+        .catch(() => showToast('Could not save slot', 'error'));
+});
+// == AVAILABILITY & PRICING ==
+function loadAvailability() {
+    const date = document.getElementById('slot-availability-date').value;
+    if (!date) { showToast('Pick a date first.', 'warning'); return; }
+    const tbody = document.getElementById('slot-availability-list');
+    tbody.innerHTML = emptyRow(5, 'Loading...');
+
+    fetch(`/api/admin/slots/availability?date=${date}`)
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            if (!data.length) { tbody.innerHTML = emptyRow(5, 'No slots found.'); return; }
+            tbody.innerHTML = data.map(sl => {
+                const statusCell = sl.is_available
+                    ? '<span class="badge badge-success">AVAILABLE</span>'
+                    : `<span class="badge badge-danger">BOOKED</span> ${sl.booking_status ? statusBadge(sl.booking_status) : ''}`;
+                const bookedBy = sl.booked_by ? escapeHtml(sl.booked_by) : '<span class="text-muted">&mdash;</span>';
+                return `
+                    <tr>
+                        <td>${escapeHtml(sl.station_name)}</td>
+                        <td>${escapeHtml(sl.point_name)}</td>
+                        <td class="mono">${escapeHtml(sl.slot_time)}</td>
+                        <td>${statusCell}</td>
+                        <td>${bookedBy}</td>
+                    </tr>`;
+            }).join('');
+        })
+        .catch(() => { tbody.innerHTML = emptyRow(5, 'Could not load availability.'); });
+}
+
+function renderPricing() {
+    const tbody = document.getElementById('pricing-list');
+    if (!tbody) return;
+    if (!adminStationsCache.length) { tbody.innerHTML = emptyRow(6, 'No stations yet.'); return; }
+    tbody.innerHTML = adminStationsCache.map(s => `
+        <tr>
+            <td>${s.id}</td>
+            <td>${escapeHtml(s.name)}</td>
+            <td>${escapeHtml(s.location)}</td>
+            <td><strong>${formatINR(s.price_per_kwh)}</strong><span class="text-muted small">/kWh</span></td>
+            <td><input type="number" step="0.01" min="0" class="form-control" id="pricing-price-${s.id}" value="${s.price_per_kwh}"></td>
+            <td class="action-cell">
+                <button class="btn btn-primary btn-sm" id="btn-update-price-${s.id}" onclick="updatePricing(${s.id})">Update</button>
+            </td>
+        </tr>`).join('');
+}
+
+function updatePricing(id) {
+    const s = adminStationsCache.find(x => x.id === id);
+    const input = document.getElementById(`pricing-price-${id}`);
+    const price = parseFloat(input.value);
+    if (!s || isNaN(price) || price < 0) { showToast('Enter a valid price.', 'error'); return; }
+
+    fetch(`/api/admin/stations/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            name: s.name,
+            location: s.location,
+            operating_hours: s.operating_hours,
+            connector_types: s.connector_types,
+            price_per_kwh: price,
+            status: s.status || 'ACTIVE'
+        })
+    })
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(() => {
+            showToast(`Pricing updated to ${formatINR(price)}/kWh`, 'success');
+            loadStationsAdmin();
+        })
+        .catch(() => showToast('Could not update pricing', 'error'));
+}
+// == BOOKINGS: DATA ==
+function loadBookingsAdmin() {
+    fetch('/api/admin/bookings')
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            adminBookingsCache = data;
+
+            const recent = document.getElementById('recent-bookings-list');
+            if (data.length === 0) {
+                recent.innerHTML = emptyRow(6, 'No bookings yet.');
+            } else {
+                recent.innerHTML = data.slice(0, 5).map(b => `
+                    <tr>
+                        <td class="mono">${b.id}</td>
+                        <td>${escapeHtml(b.user_name)}<br><small class="text-muted">${escapeHtml(b.user_email)}</small></td>
+                        <td>${escapeHtml(b.station_name)}<br><small class="text-muted">${escapeHtml(b.point_name)}</small></td>
+                        <td>${b.date}<br><small class="text-muted">${escapeHtml(b.slot_time)}</small></td>
+                        <td>${formatINR(b.amount)}</td>
+                        <td>${statusBadge(b.status)}</td>
+                    </tr>`).join('');
+            }
+            renderBookings();
+        })
+        .catch(() => {});
+}
+
+function renderBookings() {
+    const tbody = document.getElementById('admin-bookings-list');
+    const query = document.getElementById('booking-search').value.trim().toLowerCase();
+    const statusFilter = document.getElementById('booking-status-filter').value;
+    const paymentFilter = document.getElementById('booking-payment-filter').value;
+
+    const rows = adminBookingsCache.filter(b => {
+        const haystack = `${b.id} ${b.user_name} ${b.user_email} ${b.station_name} ${b.point_name}`.toLowerCase();
+        if (query && !haystack.includes(query)) return false;
+        if (statusFilter && b.status !== statusFilter) return false;
+        if (paymentFilter && (b.payment_status || 'NONE') !== paymentFilter) return false;
+        return true;
+    });
+
+    if (!rows.length) { tbody.innerHTML = emptyRow(8, 'No bookings match your filters.'); return; }
+
+    tbody.innerHTML = rows.map(b => `
+        <tr>
+            <td class="mono">${b.id}</td>
+            <td>${escapeHtml(b.user_name)}<br><small class="text-muted">${escapeHtml(b.user_email)}</small></td>
+            <td>${escapeHtml(b.station_name)}<br><small class="text-muted">${escapeHtml(b.point_name)}</small></td>
+            <td>${b.date}<br><small class="text-muted">${escapeHtml(b.slot_time)}</small></td>
+            <td>${formatINR(b.amount)}</td>
+            <td>${statusBadge(b.status)}</td>
+            <td>${b.payment_status ? statusBadge(b.payment_status) : '<span class="badge badge-neutral">UNPAID</span>'}</td>
+            <td class="action-cell">
+                <button class="btn btn-ghost btn-sm" id="btn-view-booking-${b.id}" onclick="viewBooking('${b.id}')">View</button>
+            </td>
+        </tr>`).join('');
+}
+
+function viewBooking(id) {
+    const b = adminBookingsCache.find(x => x.id === id);
+    if (!b) return;
+    const paymentHtml = b.payment_status
+        ? `${statusBadge(b.payment_status)}${b.payment_method ? ` <small class="text-muted">${escapeHtml(b.payment_method)}</small>` : ''}`
+        : '<span class="badge badge-neutral">UNPAID</span>';
+    openModal(`Booking ${b.id}`, `
+        <ul class="detail-list">
+            <li><span class="detail-label">User</span><span>${escapeHtml(b.user_name)} (${escapeHtml(b.user_email)})</span></li>
+            <li><span class="detail-label">Station</span><span>${escapeHtml(b.station_name)} &middot; ${escapeHtml(b.point_name)}</span></li>
+            <li><span class="detail-label">Date</span><span>${b.date}</span></li>
+            <li><span class="detail-label">Slot</span><span>${escapeHtml(b.slot_time)}</span></li>
+            <li><span class="detail-label">Amount</span><span>${formatINR(b.amount)}</span></li>
+            <li><span class="detail-label">Booking Status</span><span>${statusBadge(b.status)}</span></li>
+            <li><span class="detail-label">Payment</span><span>${paymentHtml}</span></li>
+        </ul>`);
+}
+
+// ---------- Users ----------
+function loadUsersAdmin() {
+    fetch('/api/admin/users')
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            const tbody = document.getElementById('admin-users-list');
+            if (!data.length) { tbody.innerHTML = emptyRow(7, 'No users yet.'); return; }
+            tbody.innerHTML = data.map(u => {
+                const roleBadge = u.is_admin
+                    ? '<span class="badge badge-charging">ADMIN</span>'
+                    : '<span class="badge badge-info">USER</span>';
+                return `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td>${escapeHtml(u.name)}</td>
+                        <td>${escapeHtml(u.email)}</td>
+                        <td>${escapeHtml(u.phone || '')}</td>
+                        <td>${roleBadge}</td>
+                        <td>${u.booking_count}</td>
+                        <td>${u.cancelled_count}</td>
+                    </tr>`;
+            }).join('');
+        })
+        .catch(() => {});
+}
+// == NOTIFICATIONS & WIRING ==
+function notifType(message) {
+    const m = String(message).toLowerCase();
+    if (m.includes('cancel')) return '<span class="badge badge-danger">CANCELLATION</span>';
+    if (m.includes('fail')) return '<span class="badge badge-danger">PAYMENT FAILED</span>';
+    if (m.includes('payment')) return '<span class="badge badge-info">PAYMENT</span>';
+    if (m.includes('started')) return '<span class="badge badge-charging">CHARGING</span>';
+    if (m.includes('completed')) return '<span class="badge badge-success">COMPLETED</span>';
+    if (m.includes('booking')) return '<span class="badge badge-success">BOOKING</span>';
+    return '<span class="badge badge-neutral">SYSTEM</span>';
+}
+
+function loadAdminNotifications() {
+    const tbody = document.getElementById('admin-notifications-list');
+    fetch('/api/admin/notifications')
+        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+        .then(data => {
+            if (!data.length) { tbody.innerHTML = emptyRow(5, 'No notifications yet.'); return; }
+            tbody.innerHTML = data.map(n => {
+                const created = String(n.created_at || '').replace(' ', 'T');
+                const when = new Date(created);
+                const whenText = isNaN(when.getTime()) ? n.created_at : when.toLocaleString();
+                const readBadge = n.is_read
+                    ? '<span class="badge badge-neutral">READ</span>'
+                    : '<span class="badge badge-info">NEW</span>';
+                return `
+                    <tr class="${n.is_read ? 'row-read' : 'row-unread'}">
+                        <td class="small text-muted">${whenText}</td>
+                        <td>${escapeHtml(n.user_name)}<br><small class="text-muted">${escapeHtml(n.user_email)}</small></td>
+                        <td>${escapeHtml(n.message)}</td>
+                        <td>${notifType(n.message)}</td>
+                        <td>${readBadge}</td>
+                    </tr>`;
+            }).join('');
+        })
+        .catch(() => { tbody.innerHTML = emptyRow(5, 'Could not load notifications.'); });
+}
+
+// ---------- Startup wiring ----------
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.admin-nav-item').forEach(btn => {
+        btn.addEventListener('click', () => switchAdminSection(btn.dataset.section));
+    });
+    document.querySelectorAll('[data-goto]').forEach(btn => {
+        btn.addEventListener('click', () => switchAdminSection(btn.dataset.goto));
+    });
+
+    const hash = window.location.hash.replace('#', '');
+    if (SECTION_IDS[hash]) switchAdminSection(hash);
+
+    document.getElementById('booking-search').addEventListener('input', renderBookings);
+    document.getElementById('booking-status-filter').addEventListener('change', renderBookings);
+    document.getElementById('booking-payment-filter').addEventListener('change', renderBookings);
+
+    document.getElementById('slot-availability-date').valueAsDate = new Date();
+    document.getElementById('btn-refresh-stats').addEventListener('click', loadStats);
+
+    document.getElementById('admin-modal').addEventListener('click', e => {
+        if (e.target.id === 'admin-modal') closeModal();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    loadAdminData();
+});
+</script>
+{% endblock %}

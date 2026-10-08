@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="card auth-card">
+        <div class="auth-head">
+            <div class="feature-icon">&#128197;</div>
+            <h2>Book a Slot</h2>
+            <p class="text-muted">Charging point slot <span id="booking-slot" class="mono">#{{ slot_id }}</span></p>
+        </div>
+        <form id="book-form">
+            <div class="form-group">
+                <label for="booking-date">Date</label>
+                <input type="date" id="booking-date" name="booking-date" class="form-control" required>
+            </div>
+            <button type="submit" id="booking-button" name="booking-button" class="btn btn-primary btn-block booking-button">Book Now</button>
+        </form>
+        <p class="auth-alt"><a href="/stations">&larr; Back to stations</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const slotId = {{ slot_id }};
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('booking-date').valueAsDate = new Date();
+});
+
+document.getElementById('book-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const date = document.getElementById('booking-date').value;
+
+    fetch('/api/bookings', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ slot_id: slotId, date: date })
+    })
+    .then(res => res.json().then(data => ({status: res.status, body: data})))
+    .then(res => {
+        if (res.status === 201) {
+            showToast('Booking created! Complete the payment to confirm.', 'success');
+            setTimeout(() => { window.location.href = `/payment/${res.body.booking_id}`; }, 500);
+        } else if (res.status === 401) {
+            window.location.href = '/login';
+        } else {
+            showToast(res.body.error || 'Failed to book slot', 'error');
+        }
+    })
+    .catch(() => showToast('Network error. Please try again.', 'error'));
+});
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="card auth-card">
+        <div class="auth-head">
+            <div class="feature-icon">&#9889;</div>
+            <h2>Welcome back</h2>
+            <p class="text-muted">Sign in to book your charging slot</p>
+        </div>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control login-email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control login-password" placeholder="Your password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" id="btn-login" name="login-button" class="btn btn-primary btn-block login-button">Login</button>
+        </form>
+        <p class="auth-alt">Don't have an account? <a href="/register">Register</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    fetch('/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, password})
+    })
+    .then(res => res.json().then(data => ({status: res.status, body: data})))
+    .then(res => {
+        if (res.status === 200) {
+            showToast('Welcome back, ' + (res.body.user.name || '') + '!', 'success');
+            setTimeout(() => {
+                window.location.href = res.body.user.is_admin ? '/admin' : '/dashboard';
+            }, 400);
+        } else {
+            showToast(res.body.error || 'Login failed', 'error');
+        }
+    })
+    .catch(() => showToast('Network error. Please try again.', 'error'));
+});
+</script>
+{% endblock %}

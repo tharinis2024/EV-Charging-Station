@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Hi, {{ session.get('name') }} &#128075;</h1>
+        <p>Ready to charge? Manage your bookings from here.</p>
+    </div>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon">&#128203;</div>
+        <div class="stat-body">
+            <span class="stat-value" id="stat-total-bookings">&mdash;</span>
+            <span class="stat-label">Total Bookings</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">&#128197;</div>
+        <div class="stat-body">
+            <span class="stat-value" id="stat-upcoming-bookings">&mdash;</span>
+            <span class="stat-label">Upcoming</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">&#9989;</div>
+        <div class="stat-body">
+            <span class="stat-value" id="stat-done-bookings">&mdash;</span>
+            <span class="stat-label">Completed</span>
+        </div>
+    </div>
+</div>
+
+<div class="grid mt-2">
+    <div class="card card-hover">
+        <h3>Find a Station</h3>
+        <p class="text-muted">Search and book an EV charging slot near you.</p>
+        <a href="/stations" id="btn-goto-stations" class="btn btn-primary mt-1">View Stations</a>
+    </div>
+    <div class="card card-hover">
+        <h3>My Bookings</h3>
+        <p class="text-muted">View your past and upcoming charging sessions.</p>
+        <a href="/history" id="btn-goto-history" class="btn btn-outline mt-1">View History</a>
+    </div>
+</div>
+
+<div class="card mt-2">
+    <div class="card-header">
+        <h3>Recent Bookings</h3>
+        <a href="/history" class="btn btn-ghost btn-sm">View all</a>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Station</th>
+                    <th>Date &amp; Time</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="dash-recent-bookings">
+                <tr><td colspan="5" class="empty-cell">Loading&hellip;</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const userId = {{ session.get('user_id') }};
+
+function loadDashboard() {
+    fetch(`/api/users/${userId}/bookings`)
+        .then(res => res.json())
+        .then(data => {
+            const upcoming = data.filter(b => ['PENDING', 'CONFIRMED', 'CHARGING'].includes(b.status));
+            const completed = data.filter(b => b.status === 'COMPLETED');
+            document.getElementById('stat-total-bookings').textContent = data.length;
+            document.getElementById('stat-upcoming-bookings').textContent = upcoming.length;
+            document.getElementById('stat-done-bookings').textContent = completed.length;
+
+            const tbody = document.getElementById('dash-recent-bookings');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-cell">No bookings yet &mdash; find a station to get started.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.slice(0, 5).map(b => `
+                <tr>
+                    <td class="mono">${b.id}</td>
+                    <td>${b.station_name}<br><small class="text-muted">${b.point_name}</small></td>
+                    <td>${b.date}<br><small class="text-muted">${b.slot_time}</small></td>
+                    <td>${formatINR(b.amount)}</td>
+                    <td>${statusBadge(b.status)}</td>
+                </tr>
+            `).join('');
+        })
+        .catch(() => {
+            document.getElementById('dash-recent-bookings').innerHTML =
+                '<tr><td colspan="5" class="empty-cell">Could not load bookings.</td></tr>';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+{% endblock %}

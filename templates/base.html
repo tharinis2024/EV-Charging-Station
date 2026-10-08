@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV ChargePoint — Smart EV Charging Bookings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand"><span class="brand-icon">&#9889;</span> EV ChargePoint</a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation">&#9776;</button>
+        <div class="nav-links" id="nav-links">
+            {% if session.get('user_id') %}
+                <a href="/dashboard" id="nav-dashboard" class="{{ 'active' if request.path == '/dashboard' else '' }}">Dashboard</a>
+                <a href="/stations" id="nav-stations" class="{{ 'active' if request.path.startswith('/stations') else '' }}">Stations</a>
+                <a href="/history" id="nav-history" class="{{ 'active' if request.path == '/history' else '' }}">My Bookings</a>
+                <a href="/notifications" id="nav-notifications" class="{{ 'active' if request.path == '/notifications' else '' }}">Notifications</a>
+                {% if session.get('is_admin') %}
+                <a href="/admin" id="nav-admin" class="{{ 'active' if request.path == '/admin' else '' }}">Admin Panel</a>
+                {% endif %}
+                <a href="#" onclick="logout()" id="logout-btn">Logout</a>
+            {% else %}
+                <a href="/login" id="nav-login" class="{{ 'active' if request.path == '/login' else '' }}">Login</a>
+                <a href="/register" id="nav-register" class="nav-cta">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div>
+                <div class="footer-brand"><span class="brand-icon small">&#9889;</span> EV ChargePoint</div>
+                <p class="footer-note">Find, book, and charge &mdash; smart charging across the network.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/stations">Stations</a>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            </div>
+            <p class="footer-note">&copy; 2026 EV ChargePoint &middot; Built for software testing</p>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        function logout() {
+            fetch('/api/logout', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                window.location.href = '/login';
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

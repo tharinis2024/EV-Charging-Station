@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1 id="station-name">Loading&hellip;</h1>
+        <p id="station-location" class="text-muted"></p>
+    </div>
+    <a href="/stations" class="btn btn-ghost btn-sm">&larr; All stations</a>
+</div>
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3>Station Info</h3>
+            <span id="station-status-badge"></span>
+        </div>
+        <ul class="detail-list" id="station-info-list">
+            <li class="text-muted">Loading station details&hellip;</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Charging Points</h3>
+        </div>
+        <ul class="detail-list" id="station-points-list">
+            <li class="text-muted">Loading points&hellip;</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mt-2">
+    <div class="card-header">
+        <h3>Slot Availability</h3>
+        <div class="slot-controls">
+            <input type="date" id="booking-date" class="form-control">
+            <button class="btn btn-primary" onclick="loadSlots()" id="btn-load-slots">Check Availability</button>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Point</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="slots-table-body">
+                <tr><td colspan="4" class="empty-cell">Loading slots&hellip;</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const stationId = {{ station_id }};
+const dateInput = document.getElementById('booking-date');
+
+function loadStationDetails() {
+    fetch(`/api/stations/${stationId}`)
+        .then(res => {
+            if (!res.ok) throw new Error('Station not found');
+            return res.json();
+        })
+        .then(data => {
+            document.getElementById('station-name').textContent = data.name;
+            document.getElementById('station-location').innerHTML =
+                `&#128205; ${escapeHtml(data.location)} &middot; &#128336; ${escapeHtml(data.operating_hours)}`;
+            document.getElementById('station-status-badge').innerHTML = statusBadge(data.status || 'ACTIVE');
+
+            document.getElementById('station-info-list').innerHTML = `
+                <li><span class="detail-label">Location</span><span>${escapeHtml(data.location)}</span></li>
+                <li><span class="detail-label">Operating Hours</span><span>${escapeHtml(data.operating_hours)}</span></li>
+                <li><span class="detail-label">Connectors</span><span>${escapeHtml(data.connector_types)}</span></li>
+                <li><span class="detail-label">Price</span><span>${formatINR(data.price_per_kwh)} / kWh</span></li>
+                <li><span class="detail-label">Status</span><span>${escapeHtml(data.status || 'ACTIVE')}</span></li>`;
+
+            const points = data.points || [];
+            document.getElementById('station-points-list').innerHTML = points.length
+                ? points.map(p => `
+                    <li>
+                        <span class="detail-label">${escapeHtml(p.point_name)}</span>
+                        <span>${statusBadge(p.status || 'ACTIVE')}</span>
+                    </li>`).join('')
+                : '<li class="text-muted">No charging points listed.</li>';
+
+            loadSlots();
+        })
+        .catch(() => {
+            document.getElementById('station-name').textContent = 'Station not found';
+            document.getElementById('slots-table-body').innerHTML =
+                '<tr><td colspan="4" class="empty-cell">Station not found.</td></tr>';
+            showToast('Could not load station details.', 'error');
+        });
+}
+
+function loadSlots() {
+    const date = dateInput.value;
+    if (!date) return;
+    const tbody = document.getElementById('slots-table-body');
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-cell">Loading slots&hellip;</td></tr>';
+
+    fetch(`/api/stations/${stationId}/slots?date=${date}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-cell">No slots available for this station.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(slot => {
+                const statusCell = slot.is_available
+                    ? '<span class="badge badge-success">AVAILABLE</span>'
+                    : '<span class="badge badge-danger">BOOKED</span>';
+                const actionCell = slot.is_available
+                    ? `<button class="btn btn-primary btn-sm booking-button" onclick="bookSlot(${slot.id}, '${date}')" id="btn-book-slot-${slot.id}">Book Now</button>`
+                    : '<button class="btn btn-sm" disabled>Unavailable</button>';
+                return `
+                    <tr class="booking-slot" data-slot-id="${slot.id}">
+                        <td>${escapeHtml(slot.point_name)}</td>
+                        <td class="mono">${escapeHtml(slot.slot_time)}</td>
+                        <td>${statusCell}</td>
+                        <td>${actionCell}</td>
+                    </tr>`;
+            }).join('');
+        })
+        .catch(() => {
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-cell">Could not load slots.</td></tr>';
+        });
+}
+
+function bookSlot(slotId, date) {
+    fetch('/api/bookings', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({slot_id: slotId, date: date})
+    })
+    .then(res => res.json().then(data => ({status: res.status, body: data})))
+    .then(res => {
+        if (res.status === 201) {
+            showToast('Booking created! Complete the payment to confirm.', 'success');
+            setTimeout(() => { window.location.href = `/payment/${res.body.booking_id}`; }, 500);
+        } else if (res.status === 401) {
+            showToast('Please login to book a slot.', 'error');
+            setTimeout(() => { window.location.href = '/login'; }, 700);
+        } else {
+            showToast(res.body.error || 'Failed to book slot', 'error');
+        }
+    })
+    .catch(() => showToast('Network error. Please try again.', 'error'));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    dateInput.valueAsDate = new Date();
+    loadStationDetails();
+});
+</script>
+{% endblock %}

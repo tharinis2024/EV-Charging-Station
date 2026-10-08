@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>My Notifications</h1>
+        <p>Booking, payment, and charging updates.</p>
+    </div>
+    <button class="btn btn-outline btn-sm" id="btn-refresh-notifications" type="button" onclick="loadNotifications()">&#8635; Refresh</button>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="notifications-table-body">
+                <tr><td colspan="3" class="empty-cell">Loading&hellip;</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function notificationIcon(message) {
+    const m = String(message).toLowerCase();
+    if (m.includes('cancel')) return '&#10060;';
+    if (m.includes('fail')) return '&#9888;';
+    if (m.includes('payment')) return '&#128179;';
+    if (m.includes('started')) return '&#9889;';
+    if (m.includes('completed')) return '&#9989;';
+    if (m.includes('booking')) return '&#128197;';
+    return '&#8505;';
+}
+
+function loadNotifications() {
+    const tbody = document.getElementById('notifications-table-body');
+    tbody.innerHTML = '<tr><td colspan="3" class="empty-cell">Loading&hellip;</td></tr>';
+
+    fetch('/api/notifications')
+        .then(res => {
+            if (res.status === 401) {
+                window.location.href = '/login';
+                return [];
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-cell">No notifications yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(n => {
+                const created = String(n.created_at || '').replace(' ', 'T');
+                const when = new Date(created);
+                const whenText = isNaN(when.getTime()) ? n.created_at : when.toLocaleString();
+                const badge = n.is_read
+                    ? '<span class="badge badge-neutral">READ</span>'
+                    : '<span class="badge badge-info">NEW</span>';
+                const rowClass = n.is_read ? 'row-read' : 'row-unread';
+                return `
+                    <tr class="${rowClass}">
+                        <td class="small text-muted">${whenText}</td>
+                        <td><span class="notif-icon">${notificationIcon(n.message)}</span> ${escapeHtml(n.message)}</td>
+                        <td>${badge}</td>
+                    </tr>`;
+            }).join('');
+        })
+        .catch(() => {
+            tbody.innerHTML = '<tr><td colspan="3" class="empty-cell">Could not load notifications.</td></tr>';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', loadNotifications);
+</script>
+{% endblock %}

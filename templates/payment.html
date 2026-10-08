@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="card auth-card payment-card">
+        <div class="auth-head">
+            <div class="feature-icon">&#128179;</div>
+            <h2>Payment</h2>
+            <p class="text-muted">Confirm your booking to reserve the slot</p>
+        </div>
+
+        <div class="payment-summary">
+            <div class="summary-row">
+                <span class="text-muted">Booking ID</span>
+                <strong id="booking-id-display" class="mono">Loading&hellip;</strong>
+            </div>
+            <div class="summary-row">
+                <span class="text-muted">Station</span>
+                <strong id="payment-station-display">&mdash;</strong>
+            </div>
+            <div class="summary-row">
+                <span class="text-muted">Date &amp; Slot</span>
+                <strong id="payment-slot-display">&mdash;</strong>
+            </div>
+            <div class="summary-row summary-total">
+                <span class="text-muted">Amount</span>
+                <strong id="amount-display">&hellip;</strong>
+            </div>
+        </div>
+
+        <div class="form-group mt-2">
+            <label for="payment-method">Payment Method</label>
+            <select id="payment-method" class="form-control">
+                <option value="CREDIT_CARD">Credit Card</option>
+                <option value="DEBIT_CARD">Debit Card</option>
+                <option value="UPI">UPI / Mobile Wallet</option>
+            </select>
+        </div>
+
+        <button id="btn-pay" name="payment-button" class="btn btn-primary btn-block payment-button" onclick="processPayment()">Pay &amp; Confirm Booking</button>
+        <p class="auth-alt small text-muted">Payments are simulated for this academic project.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const bookingId = '{{ booking_id }}';
+
+function loadBooking() {
+    fetch(`/api/bookings/${bookingId}`)
+        .then(res => {
+            if (!res.ok) throw new Error('Booking not found');
+            return res.json();
+        })
+        .then(data => {
+            document.getElementById('booking-id-display').textContent = data.id;
+            document.getElementById('amount-display').textContent = formatINR(data.amount);
+            document.getElementById('payment-station-display').textContent =
+                `${data.station_name} - ${data.point_name}`;
+            document.getElementById('payment-slot-display').textContent =
+                `${data.date} - ${data.slot_time}`;
+        })
+        .catch(() => {
+            showToast('Booking not found.', 'error');
+        });
+}
+
+function processPayment() {
+    const method = document.getElementById('payment-method').value;
+    const payBtn = document.getElementById('btn-pay');
+    payBtn.disabled = true;
+    payBtn.textContent = 'Processing...';
+
+    fetch('/api/payments', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ booking_id: bookingId, method: method })
+    })
+    .then(res => res.json().then(data => ({status: res.status, body: data})))
+    .then(res => {
+        if (res.status === 201) {
+            showToast('Payment successful! Booking confirmed.', 'success');
+            setTimeout(() => { window.location.href = '/history'; }, 800);
+        } else {
+            showToast('Payment failed: ' + (res.body.error || 'Unknown error'), 'error');
+            payBtn.disabled = false;
+            payBtn.textContent = 'Pay & Confirm Booking';
+        }
+    })
+    .catch(() => {
+        showToast('Network error. Please try again.', 'error');
+        payBtn.disabled = false;
+        payBtn.textContent = 'Pay & Confirm Booking';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadBooking);
+</script>
+{% endblock %}

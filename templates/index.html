@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-badge">&#9889; EV charging made simple</div>
+    <h1 class="hero-title">Power Your Journey,<br><span class="gradient-text">Every Single Mile</span></h1>
+    <p class="hero-sub">Find, book, and pay for charging slots at premium EV stations across the network &mdash; fast, transparent, and hassle-free.</p>
+    <div class="hero-actions">
+        <a href="/stations" class="btn btn-primary btn-lg" id="btn-find-stations">Find a Station</a>
+        <a href="/register" class="btn btn-outline btn-lg">Create Account</a>
+    </div>
+</section>
+
+<section class="mt-3">
+    <div class="grid grid-3">
+        <div class="card card-hover feature-card">
+            <div class="feature-icon">&#128269;</div>
+            <h3>Search Stations</h3>
+            <p class="text-muted">Find stations by name or location and check live slot availability for any date.</p>
+        </div>
+        <div class="card card-hover feature-card">
+            <div class="feature-icon">&#128336;</div>
+            <h3>Book &amp; Pay</h3>
+            <p class="text-muted">Reserve a time slot in seconds and complete a secure simulated payment.</p>
+        </div>
+        <div class="card card-hover feature-card">
+            <div class="feature-icon">&#9889;</div>
+            <h3>Track Charging</h3>
+            <p class="text-muted">Follow your session from booking to charging, and view full history anytime.</p>
+        </div>
+    </div>
+</section>
+
+<section class="mt-3">
+    <div class="card steps-card">
+        <h2 class="mb-1">How it works</h2>
+        <div class="steps-grid">
+            <div class="step">
+                <span class="step-num">1</span>
+                <h4>Search</h4>
+                <p class="text-muted small">Browse stations near you</p>
+            </div>
+            <div class="step">
+                <span class="step-num">2</span>
+                <h4>Book</h4>
+                <p class="text-muted small">Pick a date and slot</p>
+            </div>
+            <div class="step">
+                <span class="step-num">3</span>
+                <h4>Pay</h4>
+                <p class="text-muted small">Confirm with easy payment</p>
+            </div>
+            <div class="step">
+                <span class="step-num">4</span>
+                <h4>Charge</h4>
+                <p class="text-muted small">Start and complete your session</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

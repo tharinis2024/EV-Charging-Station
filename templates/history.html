@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>My Bookings</h1>
+        <p>Upcoming, completed, and cancelled charging sessions.</p>
+    </div>
+    <button class="btn btn-outline btn-sm" type="button" id="btn-refresh-history" onclick="loadHistory()">&#8635; Refresh</button>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon">&#128197;</div>
+        <div class="stat-body">
+            <span class="stat-value" id="history-stat-upcoming">&mdash;</span>
+            <span class="stat-label">Upcoming</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">&#9989;</div>
+        <div class="stat-body">
+            <span class="stat-value" id="history-stat-completed">&mdash;</span>
+            <span class="stat-label">Completed</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">&#10060;</div>
+        <div class="stat-body">
+            <span class="stat-value" id="history-stat-cancelled">&mdash;</span>
+            <span class="stat-label">Cancelled</span>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-2">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Station</th>
+                    <th>Date &amp; Time</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="history-table-body">
+                <tr><td colspan="6" class="empty-cell">Loading&hellip;</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const userId = {{ session.get('user_id') }};
+
+function loadHistory() {
+    const tbody = document.getElementById('history-table-body');
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">Loading&hellip;</td></tr>';
+
+    fetch(`/api/users/${userId}/bookings`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('history-stat-upcoming').textContent =
+                data.filter(b => ['PENDING', 'CONFIRMED', 'CHARGING'].includes(b.status)).length;
+            document.getElementById('history-stat-completed').textContent =
+                data.filter(b => b.status === 'COMPLETED').length;
+            document.getElementById('history-stat-cancelled').textContent =
+                data.filter(b => b.status === 'CANCELLED').length;
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">No bookings found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(b => {
+                let actionHtml = '';
+                let statsHtml = '';
+
+                if (b.status === 'CONFIRMED') {
+                    actionHtml =
+                        `<button class="btn btn-danger btn-sm cancel-booking" onclick="cancelBooking('${b.id}')" id="btn-cancel-${b.id}">Cancel</button> ` +
+                        `<button class="btn btn-primary btn-sm start-charging" onclick="startCharging('${b.id}')" id="btn-start-charging-${b.id}">Start Charging</button>`;
+                } else if (b.status === 'PENDING') {
+                    actionHtml = `<a href="/payment/${b.id}" class="btn btn-primary btn-sm pay-booking" id="btn-pay-${b.id}">Pay Now</a>`;
+                } else if (b.status === 'CHARGING') {
+                    actionHtml = `<button class="btn btn-success btn-sm complete-charging" onclick="completeCharging('${b.id}')" id="btn-complete-charging-${b.id}">Complete Charging</button>`;
+                } else {
+                    actionHtml = '<span class="text-muted small">&mdash;</span>';
+                }
+
+                if (b.status === 'COMPLETED' && b.duration) {
+                    statsHtml = `<br><small class="text-muted">${b.duration} mins &middot; ${b.energy_consumed} kWh</small>`;
+                }
+
+                return `
+                    <tr>
+                        <td class="mono">${b.id}</td>
+                        <td>${b.station_name}<br><small class="text-muted">${b.point_name}</small></td>
+                        <td>${b.date}<br><small class="text-muted">${b.slot_time}</small>${statsHtml}</td>
+                        <td>${formatINR(b.amount)}</td>
+                        <td>${statusBadge(b.status)}</td>
+                        <td class="action-cell">${actionHtml}</td>
+                    </tr>`;
+            }).join('');
+        })
+        .catch(() => {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">Could not load bookings.</td></tr>';
+        });
+}
+
+function cancelBooking(id) {
+    if (!confirm('Are you sure you want to cancel this booking?')) return;
+
+    fetch(`/api/bookings/${id}/cancel`, { method: 'PUT' })
+        .then(res => res.json())
+        .then(data => {
+            showToast(data.message || 'Booking cancelled', data.error ? 'error' : 'success');
+            loadHistory();
+        });
+}
+
+function startCharging(id) {
+    fetch('/api/charging/start', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({booking_id: id})
+    })
+    .then(res => res.json())
+    .then(() => {
+        showToast('Charging started! (Simulated)', 'success');
+        loadHistory();
+    });
+}
+
+function completeCharging(id) {
+    fetch('/api/charging/complete', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({booking_id: id})
+    })
+    .then(res => res.json())
+    .then(() => {
+        showToast('Charging completed! (Simulated)', 'success');
+        loadHistory();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadHistory);
+</script>
+{% endblock %}

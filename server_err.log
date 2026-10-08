@@ -1,0 +1,156 @@
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 705-302-049
+ * Detected change in 'D:\\EV-Charging-Station\\verify_redesign.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 705-302-049
+127.0.0.1 - - [08/Oct/2026 07:57:39] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:41] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:43] "GET /register HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:45] "GET /stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:47] "GET /stations/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:49] "GET /book/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:51] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:53] "GET /static/js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:55] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:57] "GET /register HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:57:59] "POST /api/register HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 07:58:01] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:04] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:06] "GET /stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:08] "GET /stations/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:10] "GET /history HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:12] "GET /notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:14] "GET /book/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:16] "GET /admin HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:18] "GET /api/stations?search=Central HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:20] "GET /api/stations/1/slots?date=2026-10-20 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:22] "POST /api/bookings HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 07:58:24] "GET /payment/BKGE0D9C361 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:26] "POST /api/payments HTTP/1.1" 400 -
+127.0.0.1 - - [08/Oct/2026 07:58:28] "POST /api/payments HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 07:58:30] "POST /api/charging/start HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:32] "POST /api/charging/complete HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:58:34] "POST /api/bookings HTTP/1.1" 400 -
+127.0.0.1 - - [08/Oct/2026 07:59:13] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:59:15] "GET /api/stations/1/slots?date=2026-10-21 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 07:59:17] "POST /api/bookings HTTP/1.1" 201 -
+ * Detected change in 'D:\\EV-Charging-Station\\verify_redesign.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 705-302-049
+ * Detected change in 'D:\\EV-Charging-Station\\verify_redesign.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 705-302-049
+127.0.0.1 - - [08/Oct/2026 08:01:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:14] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:16] "GET /register HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:19] "GET /stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:21] "GET /stations/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:23] "GET /book/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:25] "GET /static/css/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:27] "GET /static/js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:29] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:31] "GET /register HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:33] "POST /api/register HTTP/1.1" 400 -
+127.0.0.1 - - [08/Oct/2026 08:01:35] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:37] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:39] "GET /stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:41] "GET /stations/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:43] "GET /history HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:45] "GET /notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:47] "GET /book/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:49] "GET /admin HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:51] "GET /api/stations?search=Central HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:53] "GET /api/stations/1/slots?date=2026-10-20 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:55] "POST /api/bookings HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:01:57] "GET /payment/BKG87FF10D9 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:01:59] "POST /api/payments HTTP/1.1" 400 -
+127.0.0.1 - - [08/Oct/2026 08:02:01] "POST /api/payments HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:02:04] "POST /api/charging/start HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:06] "POST /api/charging/complete HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:08] "GET /api/stations/1/slots?date=2026-11-15 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:10] "POST /api/bookings HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:02:12] "PUT /api/bookings/BKGC6449365/cancel HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:14] "GET /api/users/6/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:16] "GET /api/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:18] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:20] "GET /admin HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:22] "GET /api/admin/stats HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:24] "GET /api/admin/users HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:26] "GET /api/admin/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:28] "GET /api/admin/slots/availability?date=2026-10-20 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:30] "GET /api/admin/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:32] "POST /api/admin/stations HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:02:34] "GET /api/admin/stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:36] "PUT /api/admin/stations/4 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:38] "POST /api/admin/points HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:02:40] "GET /api/admin/points HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:42] "PUT /api/admin/points/6 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:44] "PUT /api/admin/points/6 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:46] "POST /api/admin/slots HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:02:48] "GET /api/admin/slots HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:51] "PUT /api/admin/slots/10 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:53] "GET /api/admin/stats HTTP/1.1" 403 -
+127.0.0.1 - - [08/Oct/2026 08:02:55] "DELETE /api/admin/slots/10 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:57] "DELETE /api/admin/points/6 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:02:59] "DELETE /api/admin/stations/4 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:01] "GET /api/users/6/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:03] "PUT /api/bookings/BKG9DD04AE8/cancel HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:07] "POST /api/register HTTP/1.1" 400 -
+127.0.0.1 - - [08/Oct/2026 08:03:09] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:11] "GET /api/stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:13] "GET /api/stations/1/slots?date=2026-10-08 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:15] "POST /api/bookings HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:03:17] "GET /api/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:19] "POST /api/payments HTTP/1.1" 400 -
+127.0.0.1 - - [08/Oct/2026 08:03:21] "GET /api/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:24] "POST /api/payments HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:03:26] "GET /api/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:28] "POST /api/charging/start HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:30] "GET /api/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:32] "POST /api/charging/complete HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:34] "GET /api/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:36] "POST /api/bookings HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:03:38] "PUT /api/bookings/BKG89E467A7/cancel HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:40] "GET /api/notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:44] "POST /api/register HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:03:46] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:48] "GET /api/admin/stations HTTP/1.1" 403 -
+127.0.0.1 - - [08/Oct/2026 08:03:50] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:52] "GET /api/admin/stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:55] "POST /api/admin/stations HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:03:57] "GET /api/admin/stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:03:59] "POST /api/admin/points HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:04:01] "GET /api/admin/points HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:04:03] "POST /api/admin/slots HTTP/1.1" 201 -
+127.0.0.1 - - [08/Oct/2026 08:04:05] "PUT /api/admin/stations/5 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:04:07] "GET /api/admin/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:04:09] "GET /api/admin/slots HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:04:11] "DELETE /api/admin/slots/11 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:04:13] "DELETE /api/admin/points/7 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:04:15] "DELETE /api/admin/stations/5 HTTP/1.1" 200 -
+ * Detected change in 'D:\\EV-Charging-Station\\js_check.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 705-302-049
+127.0.0.1 - - [08/Oct/2026 08:05:56] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:05:59] "POST /api/login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:01] "GET /api/users/6/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:03] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:05] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:07] "GET /register HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:09] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:11] "GET /stations HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:13] "GET /stations/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:15] "GET /history HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:17] "GET /notifications HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:19] "GET /book/1 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:21] "GET /payment/BKGC6449365 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:06:23] "GET /admin HTTP/1.1" 200 -
+127.0.0.1 - - [08/Oct/2026 08:07:17] "GET / HTTP/1.1" 200 -

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Charging Stations</h1>
+        <p>Search by name or location, then filter by area.</p>
+    </div>
+</div>
+
+<div class="search-bar">
+    <input type="text" id="search-input" name="station-search" class="form-control station-search" placeholder="Search by name or location&hellip;">
+    <select id="station-filter" class="form-control" aria-label="Filter by location">
+        <option value="">All locations</option>
+    </select>
+    <button id="btn-search" class="btn btn-primary" onclick="loadStations()">Search</button>
+</div>
+
+<div class="grid mt-2" id="stations-list">
+    <div class="loading-state"><span class="spinner"></span> Loading stations&hellip;</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let allStations = [];
+
+function populateLocationFilter(data) {
+    const select = document.getElementById('station-filter');
+    const current = select.value;
+    const locations = new Set([...select.options].map(o => o.value).filter(Boolean));
+    data.forEach(s => locations.add(s.location));
+    select.innerHTML = '<option value="">All locations</option>' +
+        [...locations].sort().map(l => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join('');
+    select.value = current;
+}
+
+function renderStations(data) {
+    const filter = document.getElementById('station-filter').value;
+    const stations = filter ? data.filter(s => s.location === filter) : data;
+    const list = document.getElementById('stations-list');
+
+    if (stations.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">&#128269;</div>
+                <h3>No stations found</h3>
+                <p class="text-muted">Try a different search term or location.</p>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = stations.map((station, index) => `
+        <div class="card card-hover station-card" id="${index === 0 ? 'station-card' : 'station-card-' + station.id}">
+            <div class="station-card-head">
+                <div>
+                    <h3>${escapeHtml(station.name)}</h3>
+                    <p class="text-muted small">&#128205; ${escapeHtml(station.location)}</p>
+                </div>
+                ${statusBadge(station.status)}
+            </div>
+            <ul class="station-meta">
+                <li>&#128336; ${escapeHtml(station.operating_hours)}</li>
+                <li>&#128268; ${escapeHtml(station.connector_types)}</li>
+            </ul>
+            <div class="station-price">
+                <span class="price-value">${formatINR(station.price_per_kwh)}</span>
+                <span class="price-unit">/kWh</span>
+            </div>
+            <a href="/stations/${station.id}" class="btn btn-primary btn-block btn-view-details" id="btn-station-${station.id}">View Details</a>
+        </div>
+    `).join('');
+}
+
+function loadStations() {
+    const search = document.getElementById('search-input').value;
+    const list = document.getElementById('stations-list');
+    list.innerHTML = '<div class="loading-state"><span class="spinner"></span> Loading stations&hellip;</div>';
+
+    fetch(`/api/stations?search=${encodeURIComponent(search)}`)
+        .then(res => res.json())
+        .then(data => {
+            allStations = data;
+            populateLocationFilter(data);
+            renderStations(data);
+        })
+        .catch(() => {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">&#9888;</div>
+                    <h3>Could not load stations</h3>
+                    <p class="text-muted">Please check your connection and try again.</p>
+                </div>`;
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadStations();
+    document.getElementById('search-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') loadStations();
+    });
+    document.getElementById('station-filter').addEventListener('change', () => renderStations(allStations));
+});
+</script>
+{% endblock %}
