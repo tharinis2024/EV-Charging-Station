@@ -43,6 +43,55 @@ Built for a Software Testing project (Selenium, Bruno, JMeter).
 - Email: `admin@example.com`
 - Password: `admin123`
 
+> Passwords are stored as salted hashes (werkzeug). The sample rows in
+> `database/schema.sql` are converted to hashes automatically the first time
+> the app starts.
+
+### Creating or promoting an admin account (local development)
+
+Use the bundled helper instead of editing the database by hand:
+
+```bash
+# Create a brand-new admin (or update + promote an existing email)
+python create_admin.py --email me@example.com --password mysecret --name "My Admin"
+
+# Promote an existing registered user, keeping their current password
+python create_admin.py --promote user@example.com
+```
+
+Admins log in at the dedicated **Admin Login** page:
+**http://localhost:5000/admin/login** — linked from the navbar ("⚑ Admin",
+visible to logged-out visitors) and from the user login page. Successful admin
+login redirects to the Admin Panel at **http://localhost:5000/admin**; the
+navbar shows an "Admin Panel" link for administrators only. A normal user
+account can never sign in through the admin page.
+
+## Admin Module
+
+- **Dashboard:** live SQLite statistics — users, stations, charging points,
+  bookings, active charging sessions, completed/cancelled bookings,
+  successful/failed payments, revenue (₹).
+- **Stations:** add / edit / view / delete with validation; deletes cascade
+  only when no bookings reference the station.
+- **Charging points:** CRUD + ACTIVE/INACTIVE toggle (blocked while a charging
+  session is in progress).
+- **Slots:** CRUD with duplicate-time prevention and an availability grid per
+  date; slots with bookings cannot be deleted.
+- **Bookings:** list, status/payment filters, search, detail view, and safe
+  admin cancellation (lifecycle-guarded, notifies the user).
+- **Pricing:** update ₹/kWh per station; negative values rejected; persisted
+  in SQLite.
+- **Users:** search, booking counts, protected delete (admins cannot delete
+  their own account; active bookings block deletion). Passwords are never
+  returned by the API.
+- **Notifications:** read-only, system-wide view reusing the existing
+  `notifications` table.
+
+Security: `/admin` requires a logged-in admin (others are redirected / 403),
+and every `/api/admin/*` endpoint returns 401 for anonymous requests and 403
+for non-admin users.
+
+
 ## API Endpoints
 
 - `POST /api/register`

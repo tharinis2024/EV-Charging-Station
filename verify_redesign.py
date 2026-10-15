@@ -1,4 +1,6 @@
 """Temporary end-to-end verification for the UI redesign + admin module."""
+import datetime
+
 import requests
 
 BASE = 'http://localhost:5000'
@@ -85,12 +87,22 @@ check('non-admin /admin does not show Admin Dashboard', 'Admin Dashboard' not in
 r = user.get(BASE + '/api/stations', params={'search': 'Central'})
 check('station search works', r.status_code == 200 and len(r.json()) >= 1)
 
-r = user.get(BASE + '/api/stations/1/slots', params={'date': '2026-10-20'})
-slots = r.json()
-avail = next((s for s in slots if s['is_available']), None)
+r = user.get(BASE + '/api/stations')
+all_stations = r.json()
+avail, book_date = None, None
+for offset in range(14):
+    d = (datetime.date(2026, 10, 20) + datetime.timedelta(days=offset)).isoformat()
+    for st in all_stations:
+        slots = user.get(BASE + f"/api/stations/{st['id']}/slots", params={'date': d}).json()
+        avail = next((s for s in slots if s['is_available']), None)
+        if avail:
+            book_date = d
+            break
+    if avail:
+        break
 check('slot availability works', avail is not None)
 
-r = user.post(BASE + '/api/bookings', json={'slot_id': avail['id'], 'date': '2026-10-20'})
+r = user.post(BASE + '/api/bookings', json={'slot_id': avail['id'], 'date': book_date})
 check('booking created', r.status_code == 201, r.text)
 bid = r.json()['booking_id']
 

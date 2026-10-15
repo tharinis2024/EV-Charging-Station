@@ -1,6 +1,13 @@
 __pycache__/
 *.pyc
 venv/
+.venv/
 env/
 .env
 *.db
+.vercel/
+*.log
+*.bak
+.pytest_cache/
+.DS_Store
+instance/

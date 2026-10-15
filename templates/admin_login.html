@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="card auth-card">
+        <div class="auth-head">
+            <div class="feature-icon">&#128737;</div>
+            <h2>Admin Login</h2>
+            <p class="text-muted">Administrator access to the EV ChargePoint control panel</p>
+        </div>
+        <form id="admin-login-form">
+            <div class="form-group">
+                <label for="admin-email">Email</label>
+                <input type="email" id="admin-email" name="email" class="form-control admin-login-email" placeholder="admin@example.com" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" name="password" class="form-control admin-login-password" placeholder="Your admin password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" id="btn-admin-login" name="admin-login-button" class="btn btn-primary btn-block admin-login-button">Login as Admin</button>
+        </form>
+        <p class="auth-alt">Not an administrator? <a href="/login">Back to user login</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('admin-email').value.trim();
+    const password = document.getElementById('admin-password').value;
+
+    if (!email || !password) {
+        showToast('Enter your email and password.', 'error');
+        return;
+    }
+
+    fetch('/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, password})
+    })
+    .then(res => res.json().then(data => ({status: res.status, body: data})))
+    .then(res => {
+        if (res.status === 200 && res.body.user && res.body.user.is_admin) {
+            showToast('Welcome back, ' + (res.body.user.name || 'Admin') + '!', 'success');
+            setTimeout(() => { window.location.href = '/admin'; }, 400);
+            return;
+        }
+        if (res.status === 200) {
+            // Valid credentials, but the account has no admin privileges:
+            // end that session immediately so nothing stays logged in.
+            fetch('/api/logout', { method: 'POST' })
+                .finally(() => showToast('This account does not have administrator privileges.', 'error'));
+            return;
+        }
+        const msg = res.body && res.body.error === 'Invalid credentials'
+            ? 'Invalid admin email or password.'
+            : (res.body && res.body.error) || 'Login failed.';
+        showToast(msg, 'error');
+    })
+    .catch(() => showToast('Network error. Please try again.', 'error'));
+});
+</script>
+{% endblock %}

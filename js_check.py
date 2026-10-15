@@ -28,6 +28,7 @@ pages = {
     '/notifications': user.get(BASE + '/notifications').text,
     '/book/1': user.get(BASE + '/book/1').text,
     f'/payment/{pay_id}': user.get(BASE + f'/payment/{pay_id}').text,
+    '/admin/login': requests.get(BASE + '/admin/login').text,
     '/admin': admin.get(BASE + '/admin').text,
 }
 

@@ -10,15 +10,15 @@
                 <small>EV ChargePoint</small>
             </div>
         </div>
-        <nav class="admin-nav" id="admin-nav">
-            <button type="button" class="admin-nav-item active" id="admin-dashboard" data-section="dashboard">&#128202; Dashboard</button>
-            <button type="button" class="admin-nav-item" id="admin-stations" data-section="stations">&#128205; Stations</button>
-            <button type="button" class="admin-nav-item" id="admin-charging-points" data-section="points">&#128268; Charging Points</button>
-            <button type="button" class="admin-nav-item" id="admin-slots" data-section="slots">&#128336; Slots</button>
-            <button type="button" class="admin-nav-item" id="admin-pricing" data-section="pricing">&#128176; Pricing</button>
-            <button type="button" class="admin-nav-item" id="admin-bookings" data-section="bookings">&#128203; Bookings</button>
-            <button type="button" class="admin-nav-item" id="admin-users" data-section="users">&#128101; Users</button>
-            <button type="button" class="admin-nav-item" id="admin-notifications" data-section="notifications">&#128276; Notifications</button>
+        <nav class="admin-nav" id="admin-nav" data-testid="admin-nav">
+            <button type="button" class="admin-nav-item active" id="admin-dashboard" data-section="dashboard" data-testid="nav-dashboard">&#128202; Dashboard</button>
+            <button type="button" class="admin-nav-item" id="admin-stations" data-section="stations" data-testid="nav-stations">&#128205; Stations</button>
+            <button type="button" class="admin-nav-item" id="admin-charging-points" data-section="points" data-testid="nav-points">&#128268; Charging Points</button>
+            <button type="button" class="admin-nav-item" id="admin-slots" data-section="slots" data-testid="nav-slots">&#128336; Slots</button>
+            <button type="button" class="admin-nav-item" id="admin-pricing" data-section="pricing" data-testid="nav-pricing">&#128176; Pricing</button>
+            <button type="button" class="admin-nav-item" id="admin-bookings" data-section="bookings" data-testid="nav-bookings">&#128203; Bookings</button>
+            <button type="button" class="admin-nav-item" id="admin-users" data-section="users" data-testid="nav-users">&#128101; Users</button>
+            <button type="button" class="admin-nav-item" id="admin-notifications" data-section="notifications" data-testid="nav-notifications">&#128276; Notifications</button>
         </nav>
         <a href="/dashboard" class="admin-back-link">&larr; Back to site</a>
     </aside>
@@ -34,50 +34,78 @@
                 <button class="btn btn-outline btn-sm" type="button" id="btn-refresh-stats">&#8635; Refresh</button>
             </div>
 
-            <div class="stat-grid">
-                <div class="stat-card">
+            <div class="stat-grid" data-testid="stat-grid">
+                <div class="stat-card" data-testid="stat-card-users">
                     <div class="stat-icon">&#128101;</div>
                     <div class="stat-body">
                         <span class="stat-value" id="stat-total-users">&mdash;</span>
                         <span class="stat-label">Total Users</span>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-testid="stat-card-stations">
                     <div class="stat-icon">&#128205;</div>
                     <div class="stat-body">
                         <span class="stat-value" id="stat-total-stations">&mdash;</span>
                         <span class="stat-label">Total Stations</span>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-testid="stat-card-points">
                     <div class="stat-icon">&#128268;</div>
                     <div class="stat-body">
                         <span class="stat-value" id="stat-total-points">&mdash;</span>
                         <span class="stat-label">Charging Points</span>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-testid="stat-card-total-bookings">
+                    <div class="stat-icon">&#128203;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-total-bookings">&mdash;</span>
+                        <span class="stat-label">Total Bookings</span>
+                    </div>
+                </div>
+                <div class="stat-card" data-testid="stat-card-active">
                     <div class="stat-icon">&#128267;</div>
                     <div class="stat-body">
                         <span class="stat-value" id="stat-active-bookings">&mdash;</span>
                         <span class="stat-label">Active Bookings</span>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-testid="stat-card-completed">
                     <div class="stat-icon">&#9989;</div>
                     <div class="stat-body">
                         <span class="stat-value" id="stat-completed-sessions">&mdash;</span>
                         <span class="stat-label">Completed Sessions</span>
                     </div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-testid="stat-card-cancelled">
                     <div class="stat-icon">&#10060;</div>
                     <div class="stat-body">
                         <span class="stat-value" id="stat-cancelled-bookings">&mdash;</span>
                         <span class="stat-label">Cancelled Bookings</span>
                     </div>
                 </div>
-                <div class="stat-card stat-highlight">
+                <div class="stat-card" data-testid="stat-card-active-sessions">
+                    <div class="stat-icon">&#9889;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-active-sessions">&mdash;</span>
+                        <span class="stat-label">Active Charging Sessions</span>
+                    </div>
+                </div>
+                <div class="stat-card" data-testid="stat-card-payments-success">
+                    <div class="stat-icon">&#9989;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-successful-payments">&mdash;</span>
+                        <span class="stat-label">Successful Payments</span>
+                    </div>
+                </div>
+                <div class="stat-card" data-testid="stat-card-payments-failed">
+                    <div class="stat-icon">&#10060;</div>
+                    <div class="stat-body">
+                        <span class="stat-value" id="stat-failed-payments">&mdash;</span>
+                        <span class="stat-label">Failed Payments</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-highlight" data-testid="stat-card-revenue">
                     <div class="stat-icon">&#128176;</div>
                     <div class="stat-body">
                         <span class="stat-value" id="stat-revenue">&mdash;</span>
@@ -123,42 +151,42 @@
             <div class="card">
                 <div class="card-header">
                     <h3>All Stations</h3>
-                    <button class="btn btn-primary btn-sm admin-add-station" type="button" id="btn-add-station-toggle" onclick="toggleForm('add-station-form')">+ Add Station</button>
+                    <button class="btn btn-primary btn-sm admin-add-station" type="button" id="btn-add-station-toggle" data-testid="btn-add-station" onclick="toggleForm('add-station-form')">+ Add Station</button>
                 </div>
 
-                <form id="add-station-form" style="display: none;">
+                <form id="add-station-form" data-testid="station-form" style="display: none;">
                     <input type="hidden" id="station-edit-id" value="">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="station-name">Name</label>
-                            <input type="text" id="station-name" class="form-control" placeholder="Station name" required>
+                            <input type="text" id="station-name" data-testid="station-name" class="form-control" placeholder="Station name" required>
                         </div>
                         <div class="form-group">
                             <label for="station-location">Location</label>
-                            <input type="text" id="station-location" class="form-control" placeholder="Location" required>
+                            <input type="text" id="station-location" data-testid="station-location" class="form-control" placeholder="Location" required>
                         </div>
                         <div class="form-group">
                             <label for="station-hours">Operating Hours</label>
-                            <input type="text" id="station-hours" class="form-control" placeholder="e.g. 24/7" required>
+                            <input type="text" id="station-hours" data-testid="station-hours" class="form-control" placeholder="e.g. 24/7" required>
                         </div>
                         <div class="form-group">
                             <label for="station-connectors">Connector Types</label>
-                            <input type="text" id="station-connectors" class="form-control" placeholder="e.g. Type 2, CCS" required>
+                            <input type="text" id="station-connectors" data-testid="station-connectors" class="form-control" placeholder="e.g. Type 2, CCS" required>
                         </div>
                         <div class="form-group">
                             <label for="station-price">Price per kWh (&#8377;)</label>
-                            <input type="number" step="0.01" min="0" id="station-price" class="form-control" placeholder="0.50" required>
+                            <input type="number" step="0.01" min="0" id="station-price" data-testid="station-price" class="form-control" placeholder="0.50" required>
                         </div>
                         <div class="form-group">
                             <label for="station-status">Status</label>
-                            <select id="station-status" class="form-control">
+                            <select id="station-status" data-testid="station-status" class="form-control">
                                 <option value="ACTIVE">ACTIVE</option>
                                 <option value="INACTIVE">INACTIVE</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-station">Save Station</button>
+                        <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-station" data-testid="btn-submit-station">Save Station</button>
                         <button type="button" class="btn btn-ghost btn-sm" onclick="resetStationForm()">Cancel</button>
                     </div>
                 </form>
@@ -416,6 +444,12 @@
             </div>
 
             <div class="card">
+                <div class="card-header">
+                    <h3>All Users</h3>
+                    <div class="search-bar" style="margin-bottom: 0;">
+                        <input type="text" id="user-search" data-testid="user-search" class="form-control" placeholder="Search by name, email, or phone&hellip;">
+                    </div>
+                </div>
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -427,10 +461,11 @@
                                 <th>Role</th>
                                 <th>Bookings</th>
                                 <th>Cancelled</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="admin-users-list">
-                            <tr><td colspan="7" class="empty-cell">Loading&hellip;</td></tr>
+                            <tr><td colspan="8" class="empty-cell">Loading&hellip;</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -497,9 +532,13 @@ const SECTION_IDS = {
     notifications: 'admin-notifications-section'
 };
 
+// The signed-in administrator (injected server-side by Jinja).
+const CURRENT_ADMIN_ID = {{ session.get('user_id') or 0 }};
+
 let adminStationsCache = [];
 let adminPointsCache = [];
 let adminBookingsCache = [];
+let adminUsersCache = [];
 
 function emptyRow(cols, message) {
     return `<tr><td colspan="${cols}" class="empty-cell">${message}</td></tr>`;
@@ -518,13 +557,32 @@ function switchAdminSection(name) {
     }
 }
 
-function handleApiError(res) {
-    if (res.status === 403) {
-        showToast('Forbidden: Admin access required.', 'error');
-        setTimeout(() => { window.location.href = '/login'; }, 500);
-        return true;
+// Fetch JSON from an admin endpoint and surface server errors as toasts.
+// Resolves with the parsed body, rejects with err.notified = true when the
+// error message has already been shown to the user.
+async function apiFetch(url, options = {}) {
+    const res = await fetch(url, options);
+    if (!res.ok) {
+        let msg = 'Request failed (' + res.status + ')';
+        try {
+            const body = await res.json();
+            if (body && body.error) msg = body.error;
+        } catch (_) { /* non-JSON response body */ }
+        const err = new Error(msg);
+        err.notified = true;
+        if (res.status === 403) {
+            showToast('Forbidden: Admin access required.', 'error');
+            setTimeout(() => { window.location.href = '/login'; }, 500);
+        } else {
+            showToast(msg, 'error');
+        }
+        throw err;
     }
-    return false;
+    return res.json();
+}
+
+function notifyIfUnhandled(err, fallback) {
+    if (!err || !err.notified) showToast(fallback, 'error');
 }
 
 function openModal(title, html) {
@@ -544,18 +602,25 @@ function toggleForm(formId) {
 
 // ---------- Dashboard statistics ----------
 function loadStats() {
-    fetch('/api/admin/stats')
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    apiFetch('/api/admin/stats')
         .then(s => {
             document.getElementById('stat-total-users').textContent = s.total_users;
             document.getElementById('stat-total-stations').textContent = s.total_stations;
             document.getElementById('stat-total-points').textContent = s.total_charging_points;
+            const tbEl = document.getElementById('stat-total-bookings');
+            if (tbEl) tbEl.textContent = s.total_bookings;
             document.getElementById('stat-active-bookings').textContent = s.active_bookings;
             document.getElementById('stat-completed-sessions').textContent = s.completed_sessions;
             document.getElementById('stat-cancelled-bookings').textContent = s.cancelled_bookings;
+            const asEl = document.getElementById('stat-active-sessions');
+            if (asEl) asEl.textContent = s.active_sessions;
+            const spEl = document.getElementById('stat-successful-payments');
+            if (spEl) spEl.textContent = s.successful_payments;
+            const fpEl = document.getElementById('stat-failed-payments');
+            if (fpEl) fpEl.textContent = s.failed_payments;
             document.getElementById('stat-revenue').textContent = formatINR(s.revenue);
         })
-        .catch(() => {});
+        .catch(e => notifyIfUnhandled(e, 'Could not load dashboard statistics.'));
 }
 
 // ---------- Master loader ----------
@@ -570,11 +635,10 @@ function loadAdminData() {
 }
 // == CRUD: STATIONS ==
 function loadStationsAdmin() {
-    fetch('/api/admin/stations')
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    const tbody = document.getElementById('admin-stations-list');
+    apiFetch('/api/admin/stations')
         .then(data => {
             adminStationsCache = data;
-            const tbody = document.getElementById('admin-stations-list');
             if (!data.length) {
                 tbody.innerHTML = emptyRow(8, 'No stations yet.');
                 renderPricing();
@@ -597,7 +661,7 @@ function loadStationsAdmin() {
                 </tr>`).join('');
             renderPricing();
         })
-        .catch(() => {});
+        .catch(() => { tbody.innerHTML = emptyRow(8, 'Could not load stations.'); });
 }
 
 function editStation(id) {
@@ -647,16 +711,16 @@ function viewStation(id) {
 }
 
 function deleteStation(id) {
-    if (!confirm('Delete this station? Its charging points and slots are kept but orphaned.')) return;
-    fetch(`/api/admin/stations/${id}`, { method: 'DELETE' })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    if (!confirm('Delete this station? Its charging points and slots will also be removed if no bookings reference them.')) return;
+    apiFetch(`/api/admin/stations/${id}`, { method: 'DELETE' })
         .then(data => {
             showToast(data.message || 'Station deleted', 'success');
             loadStats();
             loadStationsAdmin();
             loadPointsAdmin();
+            loadSlotsAdmin();
         })
-        .catch(() => showToast('Could not delete station', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not delete station'));
 }
 
 document.getElementById('add-station-form').addEventListener('submit', function(e) {
@@ -674,27 +738,25 @@ document.getElementById('add-station-form').addEventListener('submit', function(
     const url = editId ? `/api/admin/stations/${editId}` : '/api/admin/stations';
     const method = editId ? 'PUT' : 'POST';
 
-    fetch(url, {
+    apiFetch(url, {
         method: method,
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
     })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
         .then(data => {
             showToast(data.message || 'Station saved', 'success');
             resetStationForm();
             loadStats();
             loadStationsAdmin();
         })
-        .catch(() => showToast('Could not save station', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not save station'));
 });
 // == CRUD: POINTS ==
 function loadPointsAdmin() {
-    fetch('/api/admin/points')
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    const tbody = document.getElementById('admin-points-list');
+    apiFetch('/api/admin/points')
         .then(data => {
             adminPointsCache = data;
-            const tbody = document.getElementById('admin-points-list');
             if (!data.length) { tbody.innerHTML = emptyRow(5, 'No charging points yet.'); return; }
             tbody.innerHTML = data.map(p => `
                 <tr>
@@ -709,7 +771,7 @@ function loadPointsAdmin() {
                     </td>
                 </tr>`).join('');
         })
-        .catch(() => {});
+        .catch(() => { tbody.innerHTML = emptyRow(5, 'Could not load charging points.'); });
 }
 
 function editPoint(id) {
@@ -737,30 +799,29 @@ function togglePointStatus(id) {
     const p = adminPointsCache.find(x => x.id === id);
     if (!p) return;
     const newStatus = (p.status || 'ACTIVE') === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-    fetch(`/api/admin/points/${id}`, {
+    apiFetch(`/api/admin/points/${id}`, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ station_id: p.station_id, point_name: p.point_name, status: newStatus })
     })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
         .then(() => {
             showToast(`Point set to ${newStatus}`, 'success');
             loadPointsAdmin();
             loadStats();
         })
-        .catch(() => showToast('Could not update point status', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not update point status'));
 }
 
 function deletePoint(id) {
-    if (!confirm('Delete this charging point? Its slots are kept but orphaned.')) return;
-    fetch(`/api/admin/points/${id}`, { method: 'DELETE' })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    if (!confirm('Delete this charging point? Its slots will also be removed if no bookings reference them.')) return;
+    apiFetch(`/api/admin/points/${id}`, { method: 'DELETE' })
         .then(data => {
             showToast(data.message || 'Point deleted', 'success');
             loadPointsAdmin();
             loadStats();
+            loadSlotsAdmin();
         })
-        .catch(() => showToast('Could not delete point', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not delete point'));
 }
 
 document.getElementById('add-point-form').addEventListener('submit', function(e) {
@@ -774,29 +835,27 @@ document.getElementById('add-point-form').addEventListener('submit', function(e)
     const url = editId ? `/api/admin/points/${editId}` : '/api/admin/points';
     const method = editId ? 'PUT' : 'POST';
 
-    fetch(url, {
+    apiFetch(url, {
         method: method,
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
     })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
         .then(data => {
             showToast(data.message || 'Point saved', 'success');
             resetPointForm();
             loadPointsAdmin();
             loadStats();
         })
-        .catch(() => showToast('Could not save point', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not save point'));
 });
 // == CRUD: SLOTS ==
 let adminSlotsCache = [];
 
 function loadSlotsAdmin() {
-    fetch('/api/admin/slots')
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    const tbody = document.getElementById('admin-slots-list');
+    apiFetch('/api/admin/slots')
         .then(data => {
             adminSlotsCache = data;
-            const tbody = document.getElementById('admin-slots-list');
             if (!data.length) { tbody.innerHTML = emptyRow(5, 'No slots yet.'); return; }
             tbody.innerHTML = data.map(sl => `
                 <tr>
@@ -810,7 +869,7 @@ function loadSlotsAdmin() {
                     </td>
                 </tr>`).join('');
         })
-        .catch(() => {});
+        .catch(() => { tbody.innerHTML = emptyRow(5, 'Could not load slots.'); });
 }
 
 function editSlot(id) {
@@ -834,14 +893,13 @@ function resetSlotForm() {
 }
 
 function deleteSlot(id) {
-    if (!confirm('Delete this slot?')) return;
-    fetch(`/api/admin/slots/${id}`, { method: 'DELETE' })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    if (!confirm('Delete this slot? It can only be deleted when no bookings reference it.')) return;
+    apiFetch(`/api/admin/slots/${id}`, { method: 'DELETE' })
         .then(data => {
             showToast(data.message || 'Slot deleted', 'success');
             loadSlotsAdmin();
         })
-        .catch(() => showToast('Could not delete slot', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not delete slot'));
 }
 
 document.getElementById('add-slot-form').addEventListener('submit', function(e) {
@@ -854,18 +912,17 @@ document.getElementById('add-slot-form').addEventListener('submit', function(e) 
     const url = editId ? `/api/admin/slots/${editId}` : '/api/admin/slots';
     const method = editId ? 'PUT' : 'POST';
 
-    fetch(url, {
+    apiFetch(url, {
         method: method,
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
     })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
         .then(data => {
             showToast(data.message || 'Slot saved', 'success');
             resetSlotForm();
             loadSlotsAdmin();
         })
-        .catch(() => showToast('Could not save slot', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not save slot'));
 });
 // == AVAILABILITY & PRICING ==
 function loadAvailability() {
@@ -874,8 +931,7 @@ function loadAvailability() {
     const tbody = document.getElementById('slot-availability-list');
     tbody.innerHTML = emptyRow(5, 'Loading...');
 
-    fetch(`/api/admin/slots/availability?date=${date}`)
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    apiFetch(`/api/admin/slots/availability?date=${date}`)
         .then(data => {
             if (!data.length) { tbody.innerHTML = emptyRow(5, 'No slots found.'); return; }
             tbody.innerHTML = data.map(sl => {
@@ -919,7 +975,7 @@ function updatePricing(id) {
     const price = parseFloat(input.value);
     if (!s || isNaN(price) || price < 0) { showToast('Enter a valid price.', 'error'); return; }
 
-    fetch(`/api/admin/stations/${id}`, {
+    apiFetch(`/api/admin/stations/${id}`, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -931,21 +987,19 @@ function updatePricing(id) {
             status: s.status || 'ACTIVE'
         })
     })
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
         .then(() => {
             showToast(`Pricing updated to ${formatINR(price)}/kWh`, 'success');
             loadStationsAdmin();
         })
-        .catch(() => showToast('Could not update pricing', 'error'));
+        .catch(e => notifyIfUnhandled(e, 'Could not update pricing'));
 }
 // == BOOKINGS: DATA ==
 function loadBookingsAdmin() {
-    fetch('/api/admin/bookings')
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    const recent = document.getElementById('recent-bookings-list');
+    apiFetch('/api/admin/bookings')
         .then(data => {
             adminBookingsCache = data;
 
-            const recent = document.getElementById('recent-bookings-list');
             if (data.length === 0) {
                 recent.innerHTML = emptyRow(6, 'No bookings yet.');
             } else {
@@ -961,7 +1015,11 @@ function loadBookingsAdmin() {
             }
             renderBookings();
         })
-        .catch(() => {});
+        .catch(() => {
+            recent.innerHTML = emptyRow(6, 'Could not load bookings.');
+            const list = document.getElementById('admin-bookings-list');
+            if (list) list.innerHTML = emptyRow(8, 'Could not load bookings.');
+        });
 }
 
 function renderBookings() {
@@ -991,8 +1049,26 @@ function renderBookings() {
             <td>${b.payment_status ? statusBadge(b.payment_status) : '<span class="badge badge-neutral">UNPAID</span>'}</td>
             <td class="action-cell">
                 <button class="btn btn-ghost btn-sm" id="btn-view-booking-${b.id}" onclick="viewBooking('${b.id}')">View</button>
+                ${(b.status === 'PENDING' || b.status === 'CONFIRMED')
+                    ? `<button class="btn btn-danger btn-sm" id="btn-cancel-booking-${b.id}" onclick="cancelBooking('${b.id}')">Cancel</button>`
+                    : ''}
             </td>
         </tr>`).join('');
+}
+
+function cancelBooking(id) {
+    if (!confirm(`Cancel booking ${id}? This cannot be undone.`)) return;
+    apiFetch(`/api/admin/bookings/${id}/status`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ status: 'CANCELLED' })
+    })
+        .then(data => {
+            showToast(data.message || 'Booking cancelled', 'success');
+            loadBookingsAdmin();
+            loadStats();
+        })
+        .catch(e => notifyIfUnhandled(e, 'Could not cancel booking'));
 }
 
 function viewBooking(id) {
@@ -1015,29 +1091,57 @@ function viewBooking(id) {
 
 // ---------- Users ----------
 function loadUsersAdmin() {
-    fetch('/api/admin/users')
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    const tbody = document.getElementById('admin-users-list');
+    apiFetch('/api/admin/users')
         .then(data => {
-            const tbody = document.getElementById('admin-users-list');
-            if (!data.length) { tbody.innerHTML = emptyRow(7, 'No users yet.'); return; }
-            tbody.innerHTML = data.map(u => {
-                const roleBadge = u.is_admin
-                    ? '<span class="badge badge-charging">ADMIN</span>'
-                    : '<span class="badge badge-info">USER</span>';
-                return `
-                    <tr>
-                        <td>${u.id}</td>
-                        <td>${escapeHtml(u.name)}</td>
-                        <td>${escapeHtml(u.email)}</td>
-                        <td>${escapeHtml(u.phone || '')}</td>
-                        <td>${roleBadge}</td>
-                        <td>${u.booking_count}</td>
-                        <td>${u.cancelled_count}</td>
-                    </tr>`;
-            }).join('');
+            adminUsersCache = data;
+            renderUsers();
         })
-        .catch(() => {});
+        .catch(() => { tbody.innerHTML = emptyRow(8, 'Could not load users.'); });
 }
+
+function renderUsers() {
+    const tbody = document.getElementById('admin-users-list');
+    const query = (document.getElementById('user-search').value || '').trim().toLowerCase();
+    const rows = adminUsersCache.filter(u =>
+        !query || `${u.name} ${u.email} ${u.phone || ''}`.toLowerCase().includes(query)
+    );
+    if (!rows.length) {
+        tbody.innerHTML = emptyRow(8, query ? 'No users match your search.' : 'No users yet.');
+        return;
+    }
+    tbody.innerHTML = rows.map(u => {
+        const roleBadge = u.is_admin
+            ? '<span class="badge badge-charging">ADMIN</span>'
+            : '<span class="badge badge-info">USER</span>';
+        const deleteBtn = u.id === CURRENT_ADMIN_ID
+            ? '<button class="btn btn-ghost btn-sm" disabled title="You cannot delete your own account">Delete</button>'
+            : `<button class="btn btn-danger btn-sm admin-delete-user" id="btn-delete-user-${u.id}" onclick="deleteUser(${u.id})">Delete</button>`;
+        return `
+            <tr>
+                <td>${u.id}</td>
+                <td>${escapeHtml(u.name)}</td>
+                <td>${escapeHtml(u.email)}</td>
+                <td>${escapeHtml(u.phone || '')}</td>
+                <td>${roleBadge}</td>
+                <td>${u.booking_count}</td>
+                <td>${u.cancelled_count}</td>
+                <td class="action-cell">${deleteBtn}</td>
+            </tr>`;
+    }).join('');
+}
+
+function deleteUser(id) {
+    if (!confirm('Delete this user? Their bookings and notifications will also be removed. This cannot be undone.')) return;
+    apiFetch(`/api/admin/users/${id}`, { method: 'DELETE' })
+        .then(data => {
+            showToast(data.message || 'User deleted', 'success');
+            loadUsersAdmin();
+            loadStats();
+        })
+        .catch(e => notifyIfUnhandled(e, 'Could not delete user'));
+}
+
 // == NOTIFICATIONS & WIRING ==
 function notifType(message) {
     const m = String(message).toLowerCase();
@@ -1052,8 +1156,7 @@ function notifType(message) {
 
 function loadAdminNotifications() {
     const tbody = document.getElementById('admin-notifications-list');
-    fetch('/api/admin/notifications')
-        .then(res => { if (handleApiError(res)) throw new Error('Auth'); return res.json(); })
+    apiFetch('/api/admin/notifications')
         .then(data => {
             if (!data.length) { tbody.innerHTML = emptyRow(5, 'No notifications yet.'); return; }
             tbody.innerHTML = data.map(n => {
@@ -1091,6 +1194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('booking-search').addEventListener('input', renderBookings);
     document.getElementById('booking-status-filter').addEventListener('change', renderBookings);
     document.getElementById('booking-payment-filter').addEventListener('change', renderBookings);
+    document.getElementById('user-search').addEventListener('input', renderUsers);
 
     document.getElementById('slot-availability-date').valueAsDate = new Date();
     document.getElementById('btn-refresh-stats').addEventListener('click', loadStats);

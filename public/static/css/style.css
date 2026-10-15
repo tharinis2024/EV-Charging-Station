@@ -224,6 +224,20 @@ h4 { font-size: 1.05rem; }
     color: #04140c !important;
 }
 
+/* Distinct Admin login entry point for logged-out visitors */
+.nav-links a.nav-admin-link {
+    color: #fbbf24;
+    font-weight: 600;
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    border-radius: var(--radius-pill);
+}
+
+.nav-links a.nav-admin-link:hover,
+.nav-links a.nav-admin-link.active {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.12);
+}
+
 @media (max-width: 860px) {
     .nav-toggle { display: inline-flex; }
 
@@ -653,6 +667,19 @@ table tbody tr:last-child td {
     text-align: center;
     color: var(--text-muted);
     font-size: 0.92rem;
+}
+
+/* Amber "Admin Login" link inside the auth pages */
+#login-admin-link,
+.auth-admin-link {
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+#login-admin-link:hover,
+.auth-admin-link:hover {
+    color: #fcd34d;
+    text-decoration: underline;
 }
 
 /* ---------- Station cards ---------- */

@@ -1,9 +1,25 @@
+import datetime
 import requests
 import time
 import sys
 
 BASE_URL = 'http://localhost:5000'
 session = requests.Session()
+
+
+def find_available_slot(sess, start_date, max_days=14):
+    """Scan stations and dates for a free slot so repeated test runs
+    never exhaust a single day (completed bookings are permanent)."""
+    stations = sess.get(f'{BASE_URL}/api/stations').json()
+    for offset in range(max_days):
+        date_str = (start_date + datetime.timedelta(days=offset)).isoformat()
+        for station in stations:
+            slots = sess.get(f"{BASE_URL}/api/stations/{station['id']}/slots",
+                             params={'date': date_str}).json()
+            available = next((s for s in slots if s['is_available']), None)
+            if available:
+                return available['id'], date_str
+    return None, None
 
 def test_workflow():
     print("Testing Workflow...")
@@ -28,20 +44,19 @@ def test_workflow():
     
     # 3. Search Stations
     res = session.get(f'{BASE_URL}/api/stations')
+    assert res.status_code == 200, f"Station search failed: {res.text}"
     stations = res.json()
-    station_id = stations[0]['id']
-    
-    # 4. View Slots
-    res = session.get(f'{BASE_URL}/api/stations/{station_id}/slots?date=2026-10-08')
-    slots = res.json()
-    available_slot = next(s for s in slots if s['is_available'])
-    slot_id = available_slot['id']
-    
+    assert stations, 'No stations found'
+
+    # 4. View Slots — find a station/date combination with a free slot
+    slot_id, book_date = find_available_slot(session, datetime.date(2026, 10, 8))
+    assert slot_id is not None, 'No available slot found on any station within 14 days'
+
     # 5. Book
-    print("5. Creating booking...")
+    print(f"5. Creating booking for {book_date}...")
     res = session.post(f'{BASE_URL}/api/bookings', json={
         'slot_id': slot_id,
-        'date': '2026-10-08'
+        'date': book_date
     })
     assert res.status_code == 201
     booking_id = res.json()['booking_id']
@@ -95,11 +110,14 @@ def test_workflow():
     
     # 10. Test Cancellation
     print("10. Testing cancellation notification...")
-    # Book a new slot to cancel
+    # Book a new slot to cancel (fresh slot/date so this stays repeatable)
+    cancel_slot_id, cancel_date = find_available_slot(session, datetime.date(2026, 10, 8))
+    assert cancel_slot_id is not None, 'No available slot found for cancellation test'
     res = session.post(f'{BASE_URL}/api/bookings', json={
-        'slot_id': slot_id,
-        'date': '2026-10-09'
+        'slot_id': cancel_slot_id,
+        'date': cancel_date
     })
+    assert res.status_code == 201, f"Cancel-test booking failed: {res.text}"
     cancel_booking_id = res.json()['booking_id']
     
     res = session.put(f'{BASE_URL}/api/bookings/{cancel_booking_id}/cancel')
