@@ -4,3 +4,4 @@ Werkzeug==3.0.1
 # 3.12, where psycopg2-binary wheels are available). Skipped on local
 # Python 3.14+, where development uses the SQLite fallback instead.
 psycopg2-binary==2.9.10; python_version < "3.14"
+gunicorn
