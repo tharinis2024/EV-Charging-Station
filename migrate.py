@@ -28,6 +28,8 @@ from database.db import (DATABASE_PATH, get_db, init_db, is_postgres,
 # Copy order respects foreign keys.
 TABLES_IN_ORDER = ['users', 'stations', 'charging_points', 'slots',
                    'bookings', 'payments', 'charging_sessions', 'notifications']
+IDENTITY_TABLES = ['users', 'stations', 'charging_points', 'slots',
+                   'payments', 'charging_sessions', 'notifications']
 
 # SQLite stores booleans as 0/1 integers; these columns are BOOLEAN in
 # PostgreSQL and need an explicit conversion while copying.
@@ -46,8 +48,10 @@ def copy_from_sqlite():
     file is opened in read-only mode and is never written to.
     """
     if not os.path.exists(DATABASE_PATH):
-        print(f'[WARN] No local SQLite database at {DATABASE_PATH}; nothing to copy.')
-        return
+        raise FileNotFoundError(
+            f'No local SQLite database at {DATABASE_PATH}; refusing to continue '
+            'without copying the requested source data.'
+        )
 
     src = sqlite3.connect(f'file:{DATABASE_PATH.replace(os.sep, "/")}?mode=ro', uri=True)
     src.row_factory = sqlite3.Row
@@ -82,6 +86,13 @@ def copy_from_sqlite():
             skipped = len(rows) - inserted
             print(f'[OK] {table}: {len(rows)} rows read, {inserted} inserted, '
                   f'{skipped} skipped (already existed)')
+        for table in IDENTITY_TABLES:
+            dst.execute(
+                f"SELECT setval(pg_get_serial_sequence('{table}', 'id'), "
+                f"COALESCE(MAX(id), 1), MAX(id) IS NOT NULL) FROM {table}"
+            )
+        dst.commit()
+        print('[OK] PostgreSQL identity sequences synchronized.')
     finally:
         dst.close()
         src.close()
@@ -119,7 +130,7 @@ def main():
         return
 
     print('Applying schema (safe to re-run)...')
-    init_db()
+    init_db(include_seed_data=not args.copy_from_sqlite)
     print('[OK] Schema created/verified.')
 
     if args.copy_from_sqlite:
@@ -137,4 +148,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

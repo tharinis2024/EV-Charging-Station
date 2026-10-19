@@ -178,22 +178,41 @@ def get_db():
                 'Install it with: pip install psycopg2-binary'
             ) from exc
         return PgConnection(psycopg2.connect(normalize_database_url()))
+    if os.environ.get('VERCEL'):
+        if DATABASE_URL:
+            raise RuntimeError(
+                'DATABASE_URL must use the postgres:// or postgresql:// scheme '
+                'on Vercel; refusing to fall back to SQLite.'
+            )
+        raise RuntimeError(
+            'DATABASE_URL is required on Vercel; refusing to fall back to SQLite.'
+        )
     conn = sqlite3.connect(DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def init_db():
+def init_db(include_seed_data=True):
     """Create tables and run idempotent migrations for the active backend.
 
     Safe to run repeatedly: the schema uses IF NOT EXISTS / ON CONFLICT
-    DO NOTHING and the migrations below are no-ops once applied.
+    DO NOTHING and the migrations below are no-ops once applied. Set
+    include_seed_data=False when copying an existing database into PostgreSQL.
     """
     conn = get_db()
     schema_path = POSTGRES_SCHEMA if is_postgres() else SQLITE_SCHEMA
     with open(schema_path, 'r', encoding='utf-8') as f:
         script = f.read()
     if is_postgres():
+        if not include_seed_data:
+            seed_marker = '-- Demo seed data'
+            if seed_marker not in script:
+                conn.close()
+                raise RuntimeError(
+                    'PostgreSQL schema is missing the demo seed data marker; '
+                    'refusing to initialize a migration target.'
+                )
+            script = script.split(seed_marker, 1)[0]
         conn.execute(script)          # psycopg2 runs multi-statement scripts
     else:
         conn.executescript(script)    # sqlite3 needs executescript for scripts

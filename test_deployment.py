@@ -140,6 +140,7 @@ def test_database_selection():
     print('7. Database backend selection...')
     env = os.environ.copy()
     env.pop('DATABASE_URL', None)
+    env.pop('VERCEL', None)
     code = ('import sys; sys.path.insert(0, r"%s"); '
             'import database.db as d; '
             'print(int(d.is_postgres()))' % ROOT)
@@ -149,6 +150,25 @@ def test_database_selection():
     env['DATABASE_URL'] = 'postgres://user:pw@host/db'
     out = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, env=env)
     check('PostgreSQL used when DATABASE_URL is set', out.stdout.strip() == '1', out.stderr)
+
+    vercel_env = env.copy()
+    vercel_env.pop('DATABASE_URL', None)
+    vercel_env['VERCEL'] = '1'
+    get_db_code = ('import sys; sys.path.insert(0, r"%s"); '
+                   'from database.db import get_db; '
+                   'get_db()' % ROOT)
+    out = subprocess.run([sys.executable, '-c', get_db_code],
+                         capture_output=True, text=True, env=vercel_env)
+    check('Vercel without DATABASE_URL fails instead of opening SQLite',
+          out.returncode != 0 and 'DATABASE_URL is required on Vercel' in out.stderr,
+          out.stderr)
+
+    vercel_env['DATABASE_URL'] = 'sqlite:///database/ev_booking.db'
+    out = subprocess.run([sys.executable, '-c', get_db_code],
+                         capture_output=True, text=True, env=vercel_env)
+    check('Vercel rejects non-PostgreSQL DATABASE_URL without SQLite fallback',
+          out.returncode != 0 and 'must use the postgres://' in out.stderr,
+          out.stderr)
 
 
 def test_migrate_cli():
@@ -168,6 +188,12 @@ def test_migrate_cli():
           out.returncode == 0 and 'DRY-RUN' in out.stdout and 'user:****@' in out.stdout,
           out.stdout + out.stderr)
     check('dry-run mentions the read-only copy', 'read-only' in out.stdout, out.stdout)
+    with open(os.path.join(ROOT, 'migrate.py'), encoding='utf-8') as f:
+        migration = f.read()
+    check('copy migration omits PostgreSQL demo seeds before importing SQLite rows',
+          'init_db(include_seed_data=not args.copy_from_sqlite)' in migration)
+    check('copy migration synchronizes PostgreSQL identity sequences',
+          'PostgreSQL identity sequences synchronized' in migration)
 
 
 def test_route_sql_portability():
@@ -195,5 +221,4 @@ if __name__ == '__main__':
     except AssertionError as e:
         print(f'Test failed: {e}')
         sys.exit(1)
-
 

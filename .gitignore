@@ -4,6 +4,8 @@ venv/
 .venv/
 env/
 .env
+.env.*
+!.env.example
 *.db
 .vercel/
 *.log

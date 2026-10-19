@@ -33,6 +33,37 @@ Built for a Software Testing project (Selenium, Bruno, JMeter).
    ```
 4. Open your browser and go to `http://localhost:5000`
 
+## Vercel deployment with PostgreSQL
+
+Vercel functions cannot use the ignored, deployment-excluded SQLite file as a
+persistent application database. In the Vercel project settings, configure
+`DATABASE_URL` with the connection URL of a real, reachable PostgreSQL database
+(`postgres://` or `postgresql://`) and configure a strong `SECRET_KEY`. Keep
+these values in Vercel environment variables; do not commit them. Configure
+them for each environment you deploy, then redeploy. The project pins Python
+3.12, for which `requirements.txt` installs `psycopg2-binary`.
+
+The app does not initialize the PostgreSQL schema automatically in Vercel.
+To copy the existing local SQLite data, first make and verify a separate
+backup of `database/ev_booking.db`, and use a new, empty PostgreSQL database.
+From a local terminal where the database URL is securely available as
+`DATABASE_URL`, preview and then run:
+
+```bash
+python migrate.py --dry-run --copy-from-sqlite
+python migrate.py --copy-from-sqlite
+```
+
+The migration reads SQLite in read-only mode, initializes PostgreSQL without
+demo seed rows, copies the existing records without overwriting conflicts,
+hashes legacy plaintext passwords, and synchronizes PostgreSQL identity
+sequences. Review the per-table inserted/skipped counts: any skipped rows
+indicate existing conflicting PostgreSQL records and should be reconciled
+before switching traffic. Do not use the copy command if the local database
+or a verified backup is unavailable. A dry run validates and prints the plan;
+it does not prove that the database URL works. Only a successful real
+migration proves the PostgreSQL connection and schema setup worked.
+
 ## Sample Credentials
 
 **User:**
